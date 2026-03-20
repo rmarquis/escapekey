@@ -31,7 +31,26 @@
   --key-radius: 7px;
 }
 
-html { background: var(--bg); color: var(--text); }
+/* Light theme overrides */
+html[data-theme="light"] {
+  --bg: #f0f0f5;
+  --bg-above: #e4e4ec;
+  --bg-surface: #ffffff;
+  --bg-key: #ffffff;
+  --text: #1a1b26;
+  --text-sub: #4a4f6a;
+  --text-dim: #8890a8;
+  --border: #d0d4e0;
+
+  --cat-motion: #0077b6;
+  --cat-command: #b8860b;
+  --cat-insert: #c4314b;
+  --cat-operator: #3a7d28;
+  --cat-extra: #7c3aed;
+  --cat-count: #8890a8;
+}
+
+html { background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
@@ -354,6 +373,34 @@ header .subtitle {
 }
 .credit a { color: var(--text-dim); text-decoration: underline; }
 
+/* Theme selector */
+.theme-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
+.theme-select {
+  padding: 4px 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.theme-select:focus { border-color: var(--cat-extra); }
+
+/* Light theme key shadow adjustments */
+html[data-theme="light"] .key {
+  box-shadow: 0 1px 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+}
+html[data-theme="light"] .key:hover {
+  box-shadow: 0 2px 0 1px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.12);
+}
+html[data-theme="light"] .key:active {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 1px rgba(0,0,0,0.08);
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 1000px) {
   :root { --key-size: 52px; }
@@ -387,6 +434,13 @@ header .subtitle {
         <div class="toggle-track" id="shift-toggle">
           <div class="toggle-thumb"></div>
         </div>
+      </div>
+      <div class="theme-toggle">
+        <span>Theme</span>
+        <select class="theme-select" id="theme-select">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
       </div>
     </div>
   </div>
@@ -1032,6 +1086,19 @@ function initEvents() {
     state.shiftLocked = !state.shiftLocked;
     updateDisplay();
     if (state.selectedKey) renderDetail(state.selectedKey);
+  });
+
+  // Theme selector
+  var themeSelect = $('#theme-select');
+  var savedTheme = localStorage.getItem('vim-cheat-theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeSelect.value = savedTheme;
+  }
+  themeSelect.addEventListener('change', function(e) {
+    var theme = e.target.value;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('vim-cheat-theme', theme);
   });
 
   document.addEventListener('keydown', function(e) {
