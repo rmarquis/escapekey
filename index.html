@@ -216,6 +216,35 @@ header .subtitle {
   padding: 0 14px;
   height: var(--key-size);
 }
+/* Wide keys */
+.key-wide {
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+.key-wide .key-char {
+  font-size: 13px;
+  font-weight: 500;
+}
+.key-wide .key-label {
+  font-size: 9px;
+}
+.key-flex {
+  flex: 1;
+  width: auto !important;
+}
+/* Faded modifier/non-primary keys */
+.key-faded {
+  opacity: 0.45;
+}
+.key-faded:hover {
+  opacity: 0.75;
+}
+.key-faded.dimmed {
+  opacity: 0.08;
+}
+.key-faded.dimmed:hover {
+  opacity: 0.3;
+}
 
 /* === KEY === */
 .key {
@@ -776,13 +805,105 @@ var KEYS = {
     shifted: { char: '?', label: 'find reverse',  cat: 'extra',   tags: ['search'], dot: true },
     notes: [],
   },
+  'Tab': {
+    normal:  { char: 'Tab', label: 'jump fwd',    cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'S-Tab', label: 'jump back', cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'CapsLock': {
+    normal:  { char: 'Caps Lock', label: 'remap \u2192 Esc', cat: 'extra', tags: [] },
+    shifted: { char: 'Caps Lock', label: 'remap \u2192 Esc', cat: 'extra', tags: [] },
+    notes: [],
+  },
+  'Backspace': {
+    normal:  { char: 'Bksp', label: 'move left',  cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'Bksp', label: 'move left',  cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'Enter': {
+    normal:  { char: 'Enter', label: 'next line',  cat: 'motion', tags: ['moving'] },
+    shifted: { char: 'Enter', label: 'next line',  cat: 'motion', tags: ['moving'] },
+    notes: [],
+  },
+  'LShift': {
+    normal:  { char: 'Shift', label: 'modifier',   cat: 'extra',  tags: [] },
+    shifted: { char: 'Shift', label: 'modifier',   cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'RShift': {
+    normal:  { char: 'Shift', label: 'modifier',   cat: 'extra',  tags: [] },
+    shifted: { char: 'Shift', label: 'modifier',   cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'LCtrl': {
+    normal:  { char: 'Ctrl', label: 'modifier',    cat: 'extra',  tags: [] },
+    shifted: { char: 'Ctrl', label: 'modifier',    cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'RCtrl': {
+    normal:  { char: 'Ctrl', label: 'modifier',    cat: 'extra',  tags: [] },
+    shifted: { char: 'Ctrl', label: 'modifier',    cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'LAlt': {
+    normal:  { char: 'Alt', label: 'modifier',     cat: 'extra',  tags: [] },
+    shifted: { char: 'Alt', label: 'modifier',     cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'RAlt': {
+    normal:  { char: 'Alt', label: 'modifier',     cat: 'extra',  tags: [] },
+    shifted: { char: 'Alt', label: 'modifier',     cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'LMeta': {
+    normal:  { char: 'Super', label: 'modifier',   cat: 'extra',  tags: [] },
+    shifted: { char: 'Super', label: 'modifier',   cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'RMeta': {
+    normal:  { char: 'Super', label: 'modifier',   cat: 'extra',  tags: [] },
+    shifted: { char: 'Super', label: 'modifier',   cat: 'extra',  tags: [] },
+    notes: [],
+  },
+  'Space': {
+    normal:  { char: 'Space', label: 'move right',  cat: 'motion', tags: ['moving'] },
+    shifted: { char: 'Space', label: 'move right',  cat: 'motion', tags: ['moving'] },
+    notes: [],
+  },
+};
+
+// Key widths in units (1u = standard key). Keys not listed are 1u.
+var KEY_WIDTHS = {
+  'Tab': 1.5,
+  '\\': 1.5,     // leader key — extended to align with row edges
+  'CapsLock': 1.75,
+  'Backspace': 2,
+  'Enter': 2.25,
+  'LShift': 2.25,
+  'RShift': 2.75,
+  'LCtrl': 1.5,
+  'RCtrl': 1.5,
+  'LAlt': 1.25,
+  'RAlt': 1.25,
+  'LMeta': 1.25,
+  'RMeta': 1.25,
+  'Space': 0,    // 0 = flex fill
+};
+
+// Faded modifier/spacer keys (not primary Vim keys)
+var FADED_KEYS = {
+  'Tab': 1, 'Backspace': 1, 'Enter': 1,
+  'LShift': 1, 'RShift': 1, 'LCtrl': 1, 'RCtrl': 1,
+  'LAlt': 1, 'RAlt': 1, 'LMeta': 1, 'RMeta': 1,
+  'CapsLock': 1, 'Space': 1,
 };
 
 var ROWS = [
-  { keys: ['`','1','2','3','4','5','6','7','8','9','0','-','='], offset: 0 },
-  { keys: ['q','w','e','r','t','y','u','i','o','p','[',']','\\'], offset: 0.5 },
-  { keys: ['a','s','d','f','g','h','j','k','l',';',"'"], offset: 0.75 },
-  { keys: ['z','x','c','v','b','n','m',',','.','/'], offset: 1.25 },
+  { keys: ['`','1','2','3','4','5','6','7','8','9','0','-','=','Backspace'] },
+  { keys: ['Tab','q','w','e','r','t','y','u','i','o','p','[',']','\\'] },
+  { keys: ['CapsLock','a','s','d','f','g','h','j','k','l',';',"'",'Enter'] },
+  { keys: ['LShift','z','x','c','v','b','n','m',',','.','/','RShift'] },
+  { keys: ['LCtrl','LMeta','LAlt','Space','RAlt','RMeta','RCtrl'] },
 ];
 
 var FILTERS = [
@@ -982,12 +1103,21 @@ var $$ = function(sel) { return document.querySelectorAll(sel); };
 // RENDERING
 // =============================================================================
 function makeKeyEl(keyId, extraClass) {
-  var keyEl = el('div', { className: 'key' + (extraClass ? ' ' + extraClass : '') }, [
+  var w = KEY_WIDTHS[keyId];
+  var cls = 'key';
+  if (extraClass) cls += ' ' + extraClass;
+  if (w !== undefined && w > 0) cls += ' key-wide';
+  if (w === 0) cls += ' key-wide key-flex';
+  if (FADED_KEYS[keyId]) cls += ' key-faded';
+  var keyEl = el('div', { className: cls }, [
     el('span', { className: 'key-char' }),
     el('span', { className: 'key-label' }),
     el('span', { className: 'key-dot' }),
   ]);
   keyEl.setAttribute('data-key', keyId);
+  if (w && w > 0) {
+    keyEl.style.width = 'calc(' + w + ' * var(--key-size) + ' + (w - 1) + ' * var(--key-gap))';
+  }
   keyEl.addEventListener('mouseenter', function() { showDetail(keyId); });
   keyEl.addEventListener('click', function(ev) { ev.stopPropagation(); selectKey(keyId); });
   return keyEl;
@@ -1033,7 +1163,7 @@ function renderKeyboard() {
 
   // Main key rows
   ROWS.forEach(function(row) {
-    var rowEl = el('div', { className: 'kb-row', style: { paddingLeft: 'calc(' + row.offset + ' * var(--key-unit))' } });
+    var rowEl = el('div', { className: 'kb-row' });
     row.keys.forEach(function(keyId) {
       rowEl.appendChild(makeKeyEl(keyId));
     });
@@ -1245,6 +1375,29 @@ function renderDetail(keyId) {
   ]);
   body.appendChild(otherSection);
 
+  // Ctrl key: show all Ctrl commands
+  if (keyId === 'LCtrl' || keyId === 'RCtrl') {
+    var ctrlSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Ctrl commands')]);
+    var ul = el('ul');
+    CTRL_COMMANDS.forEach(function(c) {
+      ul.appendChild(el('li', null, [
+        el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-command)' } }, c.cmd),
+        document.createTextNode(' \u2014 ' + c.desc),
+      ]));
+    });
+    ctrlSection.appendChild(ul);
+    body.appendChild(ctrlSection);
+  }
+
+  // CapsLock: show remap tip
+  if (keyId === 'CapsLock') {
+    var capsSection = el('div', { className: 'detail-section' }, [
+      el('h4', null, 'Tip'),
+      el('p', null, 'Caps Lock has no native Vim binding. Most Vim users remap it to Escape for faster mode switching, since Esc is the most frequently used key.'),
+    ]);
+    body.appendChild(capsSection);
+  }
+
   // Text objects (for operators)
   if (primary.cat === 'operator') {
     var toSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Works with text objects')]);
@@ -1365,6 +1518,18 @@ function initEvents() {
       } else {
         selectKey('Escape');
       }
+      return;
+    }
+
+    // Map special physical keys to our key IDs
+    var specialMap = {
+      'Tab': 'Tab', 'Backspace': 'Backspace', 'Enter': 'Enter',
+      ' ': 'Space', 'Control': 'LCtrl', 'CapsLock': 'CapsLock',
+      'Alt': 'LAlt', 'Meta': 'LMeta',
+    };
+    if (specialMap[e.key]) {
+      selectKey(specialMap[e.key]);
+      e.preventDefault();
       return;
     }
 
