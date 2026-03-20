@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoVim Interactive Cheatsheet</title>
+<style>
+/* === RESET & BASE === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #1a1b26;
+  --bg-above: #1f2030;
+  --bg-surface: #24283b;
+  --bg-key: #2a2e42;
+  --text: #c0caf5;
+  --text-sub: #9aa5ce;
+  --text-dim: #565f89;
+  --border: #3b3d57;
+
+  --cat-motion: #7dcfff;
+  --cat-command: #e0af68;
+  --cat-insert: #f7768e;
+  --cat-operator: #9ece6a;
+  --cat-extra: #bb9af7;
+  --cat-count: #565f89;
+
+  --key-size: 62px;
+  --key-gap: 5px;
+  --key-unit: calc(var(--key-size) + var(--key-gap));
+  --key-radius: 7px;
+}
+
+html { background: var(--bg); color: var(--text); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 48px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* === HEADER === */
+header { text-align: center; }
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+header .subtitle {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* === CONTROLS === */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.search-box { position: relative; width: 280px; }
+.search-box input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-box input:focus { border-color: var(--cat-extra); }
+.search-box::before {
+  content: '\2315';
+  position: absolute;
+  left: 10px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.filter-btn {
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.filter-btn:hover { color: var(--text); border-color: var(--text-dim); }
+.filter-btn.active {
+  background: var(--bg-surface);
+  color: var(--text);
+  border-color: var(--cat-extra);
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Shift toggle */
+.shift-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
+.toggle-track {
+  width: 38px; height: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+.toggle-track.active { background: var(--cat-extra); border-color: var(--cat-extra); }
+.toggle-thumb {
+  width: 16px; height: 16px;
+  background: var(--text);
+  border-radius: 50%;
+  position: absolute;
+  top: 1px; left: 1px;
+  transition: transform 0.2s;
+}
+.toggle-track.active .toggle-thumb { transform: translateX(18px); }
+
+/* === KEYBOARD === */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--key-gap);
+  padding: 20px;
+  background: var(--bg-above);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.kb-row {
+  display: flex;
+  gap: var(--key-gap);
+}
+
+/* === KEY === */
+.key {
+  width: var(--key-size);
+  height: var(--key-size);
+  background: var(--bg-key);
+  border-radius: var(--key-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid transparent;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 0 1px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.15);
+}
+
+.key:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 0 1px rgba(0,0,0,0.2), 0 4px 10px rgba(0,0,0,0.25);
+}
+.key:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 1px 1px rgba(0,0,0,0.15);
+}
+.key.selected {
+  transform: translateY(-2px);
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+.key.dimmed {
+  opacity: 0.12;
+}
+.key.dimmed:hover {
+  opacity: 0.4;
+}
+
+/* Category colors — applied as border-bottom + char color */
+.key[data-cat="motion"]  { border-bottom-color: var(--cat-motion); }
+.key[data-cat="command"] { border-bottom-color: var(--cat-command); }
+.key[data-cat="insert"]  { border-bottom-color: var(--cat-insert); }
+.key[data-cat="operator"]{ border-bottom-color: var(--cat-operator); }
+.key[data-cat="extra"]   { border-bottom-color: var(--cat-extra); }
+.key[data-cat="count"]   { border-bottom-color: var(--cat-count); }
+
+.key[data-cat="motion"]  .key-char { color: var(--cat-motion); }
+.key[data-cat="command"] .key-char { color: var(--cat-command); }
+.key[data-cat="insert"]  .key-char { color: var(--cat-insert); }
+.key[data-cat="operator"] .key-char { color: var(--cat-operator); }
+.key[data-cat="extra"]   .key-char { color: var(--cat-extra); }
+.key[data-cat="count"]   .key-char { color: var(--cat-count); }
+
+.key-char {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+}
+.key-label {
+  font-size: 8.5px;
+  line-height: 1.15;
+  color: var(--text-sub);
+  text-align: center;
+  max-width: calc(var(--key-size) - 8px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Dot indicator for keys needing a char argument */
+.key-dot {
+  position: absolute;
+  top: 3px; right: 5px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-dim);
+}
+
+/* === DETAIL PANEL === */
+.detail-panel {
+  width: 100%;
+  min-height: 100px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.detail-placeholder { color: var(--text-dim); text-align: center; padding: 12px; }
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.detail-keychar {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.detail-title { font-size: 1.1rem; font-weight: 600; }
+.detail-cat {
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid;
+  display: inline-block;
+}
+.detail-body { display: flex; gap: 24px; flex-wrap: wrap; }
+.detail-section { flex: 1; min-width: 200px; }
+.detail-section h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.detail-section p, .detail-section li {
+  color: var(--text-sub);
+  font-size: 0.82rem;
+}
+.detail-section ul { list-style: none; }
+.detail-section li { margin-bottom: 2px; }
+.note-ref {
+  background: var(--bg-key);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  border-left: 3px solid var(--cat-extra);
+}
+
+/* === LEGEND & REFERENCE === */
+.reference {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.ref-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.ref-card h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.legend-items { display: flex; flex-wrap: wrap; gap: 10px; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-sub);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ref-list { display: flex; flex-direction: column; gap: 4px; }
+.ref-row {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+.ref-cmd {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+  color: var(--cat-command);
+  min-width: 90px;
+  font-size: 0.78rem;
+}
+.ref-desc { color: var(--text-sub); }
+
+.credit {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+.credit a { color: var(--text-dim); text-decoration: underline; }
+
+/* === RESPONSIVE === */
+@media (max-width: 1000px) {
+  :root { --key-size: 52px; }
+  .key-char { font-size: 13px; }
+  .key-label { font-size: 7.5px; }
+}
+@media (max-width: 800px) {
+  :root { --key-size: 42px; }
+  .key-char { font-size: 11px; }
+  .key-label { font-size: 0; visibility: hidden; }
+  .key-dot { font-size: 10px; }
+  .reference { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>NeoVim Interactive Cheatsheet</h1>
+    <p class="subtitle">Hover, click, or press keys &middot; Hold Shift to see the shifted layer</p>
+  </header>
+
+  <div class="controls">
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search commands..." autocomplete="off">
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="controls-row">
+      <div class="shift-toggle">
+        <span>Shift</span>
+        <div class="toggle-track" id="shift-toggle">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="keyboard" id="keyboard"></div>
+  <div class="detail-panel" id="detail"></div>
+
+  <div class="reference">
+    <div class="ref-card">
+      <h3>Legend</h3>
+      <div class="legend-items" id="legend"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Important ex commands</h3>
+      <div class="ref-list" id="ex-cmds"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Ctrl commands</h3>
+      <div class="ref-list" id="ctrl-cmds"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Tips</h3>
+      <div class="ref-list" id="tips"></div>
+    </div>
+  </div>
+
+  <p class="credit" id="credit"></p>
+</div>
+
+<script>
+// =============================================================================
+// DATA
+// =============================================================================
+// Each key: { normal: { char, label, cat, tags, dot }, shifted: { ... }, notes: [] }
+// cat values: 'motion' | 'command' | 'insert' | 'operator' | 'extra' | 'count'
+// tags: used for filter buttons (matching the spreadsheet sheet tabs)
+// dot: true if the key expects a follow-up character argument
+
+var KEYS = {
+  '`': {
+    normal:  { char: '`', label: 'goto mark',    cat: 'extra',    tags: ['marks'], dot: true },
+    shifted: { char: '~', label: 'toggle case',  cat: 'command',  tags: ['actions'] },
+    notes: [],
+  },
+  '1': {
+    normal:  { char: '1', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '!', label: 'ext. filter',   cat: 'operator', tags: ['operators'] },
+    notes: [2],
+  },
+  '2': {
+    normal:  { char: '2', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '@', label: 'play macro',    cat: 'extra',   tags: ['macros'], dot: true },
+    notes: [2],
+  },
+  '3': {
+    normal:  { char: '3', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '#', label: 'prev ident',    cat: 'motion',  tags: ['search', 'moving'] },
+    notes: [2],
+  },
+  '4': {
+    normal:  { char: '4', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '$', label: 'end of line',   cat: 'motion',  tags: ['moving'] },
+    notes: [2],
+  },
+  '5': {
+    normal:  { char: '5', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '%', label: 'goto match',    cat: 'motion',  tags: ['moving'] },
+    notes: [2],
+  },
+  '6': {
+    normal:  { char: '6', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '^', label: 'soft bol',      cat: 'motion',  tags: ['moving'] },
+    notes: [2],
+  },
+  '7': {
+    normal:  { char: '7', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '&', label: 'repeat :s',     cat: 'command', tags: ['actions', 'search'] },
+    notes: [2],
+  },
+  '8': {
+    normal:  { char: '8', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '*', label: 'next ident',    cat: 'motion',  tags: ['search', 'moving'] },
+    notes: [2],
+  },
+  '9': {
+    normal:  { char: '9', label: 'count',         cat: 'count',   tags: [] },
+    shifted: { char: '(', label: 'begin sent.',   cat: 'motion',  tags: ['moving'] },
+    notes: [2],
+  },
+  '0': {
+    normal:  { char: '0', label: 'hard bol',      cat: 'motion',  tags: ['moving'] },
+    shifted: { char: ')', label: 'end sent.',     cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  '-': {
+    normal:  { char: '-', label: 'prev line',     cat: 'motion',  tags: ['moving'] },
+    shifted: { char: '_', label: 'soft bol \u2193',cat: 'motion', tags: ['moving'] },
+    notes: [],
+  },
+  '=': {
+    normal:  { char: '=', label: 'auto format',   cat: 'operator', tags: ['operators'] },
+    shifted: { char: '+', label: 'next line',     cat: 'motion',  tags: ['moving'] },
+    notes: [3],
+  },
+  'q': {
+    normal:  { char: 'q', label: 'record macro',  cat: 'extra',   tags: ['macros'], dot: true },
+    shifted: { char: 'Q', label: 'ex mode',       cat: 'command', tags: ['modes'] },
+    notes: [],
+  },
+  'w': {
+    normal:  { char: 'w', label: 'next word',     cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'W', label: 'next WORD',     cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'e': {
+    normal:  { char: 'e', label: 'end word',      cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'E', label: 'end WORD',      cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'r': {
+    normal:  { char: 'r', label: 'replace char',  cat: 'extra',   tags: ['actions'], dot: true },
+    shifted: { char: 'R', label: 'replace mode',  cat: 'insert',  tags: ['modes', 'actions'] },
+    notes: [],
+  },
+  't': {
+    normal:  { char: 't', label: "'till",         cat: 'extra',   tags: ['moving'], dot: true },
+    shifted: { char: 'T', label: "back 'till",    cat: 'extra',   tags: ['moving'], dot: true },
+    notes: [],
+  },
+  'y': {
+    normal:  { char: 'y', label: 'yank',          cat: 'operator', tags: ['operators', 'copy-paste'] },
+    shifted: { char: 'Y', label: 'yank line',     cat: 'command',  tags: ['copy-paste'] },
+    notes: [1, 3],
+  },
+  'u': {
+    normal:  { char: 'u', label: 'undo',          cat: 'command',  tags: ['actions'] },
+    shifted: { char: 'U', label: 'undo line',     cat: 'command',  tags: ['actions'] },
+    notes: [],
+  },
+  'i': {
+    normal:  { char: 'i', label: 'insert mode',   cat: 'insert',  tags: ['modes'] },
+    shifted: { char: 'I', label: 'insert at bol', cat: 'insert',  tags: ['modes'] },
+    notes: [],
+  },
+  'o': {
+    normal:  { char: 'o', label: 'open below',    cat: 'insert',  tags: ['modes', 'actions'] },
+    shifted: { char: 'O', label: 'open above',    cat: 'insert',  tags: ['modes', 'actions'] },
+    notes: [],
+  },
+  'p': {
+    normal:  { char: 'p', label: 'paste after',   cat: 'command',  tags: ['copy-paste'] },
+    shifted: { char: 'P', label: 'paste before',  cat: 'command',  tags: ['copy-paste'] },
+    notes: [1],
+  },
+  '[': {
+    normal:  { char: '[', label: 'misc',          cat: 'extra',   tags: [], dot: true },
+    shifted: { char: '{', label: 'begin parag.',  cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  ']': {
+    normal:  { char: ']', label: 'misc',          cat: 'extra',   tags: [], dot: true },
+    shifted: { char: '}', label: 'end parag.',    cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  '\\': {
+    normal:  { char: '\\', label: 'leader',       cat: 'extra',   tags: [], dot: true },
+    shifted: { char: '|', label: 'goto col',      cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'a': {
+    normal:  { char: 'a', label: 'append',        cat: 'insert',  tags: ['modes'] },
+    shifted: { char: 'A', label: 'append at eol', cat: 'insert',  tags: ['modes'] },
+    notes: [],
+  },
+  's': {
+    normal:  { char: 's', label: 'subst char',    cat: 'insert',  tags: ['actions', 'modes'] },
+    shifted: { char: 'S', label: 'subst line',    cat: 'insert',  tags: ['actions', 'modes'] },
+    notes: [],
+  },
+  'd': {
+    normal:  { char: 'd', label: 'delete',        cat: 'operator', tags: ['operators', 'delete'] },
+    shifted: { char: 'D', label: 'delete to eol', cat: 'command',  tags: ['delete'] },
+    notes: [1, 3],
+  },
+  'f': {
+    normal:  { char: 'f', label: 'find char',     cat: 'extra',   tags: ['moving'], dot: true },
+    shifted: { char: 'F', label: 'back find',     cat: 'extra',   tags: ['moving'], dot: true },
+    notes: [],
+  },
+  'g': {
+    normal:  { char: 'g', label: 'extra cmds',    cat: 'extra',   tags: ['moving'], dot: true },
+    shifted: { char: 'G', label: 'eof / goto ln', cat: 'extra',   tags: ['moving'], dot: true },
+    notes: [6],
+  },
+  'h': {
+    normal:  { char: 'h', label: 'left',          cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'H', label: 'screen top',    cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'j': {
+    normal:  { char: 'j', label: 'down',          cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'J', label: 'join lines',    cat: 'command',  tags: ['actions'] },
+    notes: [],
+  },
+  'k': {
+    normal:  { char: 'k', label: 'up',            cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'K', label: 'help',          cat: 'command',  tags: [] },
+    notes: [],
+  },
+  'l': {
+    normal:  { char: 'l', label: 'right',         cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'L', label: 'screen bottom', cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  ';': {
+    normal:  { char: ';', label: 'repeat f/t',    cat: 'motion',  tags: ['moving'] },
+    shifted: { char: ':', label: 'ex cmd line',   cat: 'command',  tags: ['modes'] },
+    notes: [],
+  },
+  "'": {
+    normal:  { char: "'", label: 'goto mk bol',   cat: 'extra',   tags: ['marks'], dot: true },
+    shifted: { char: '"', label: 'register',      cat: 'extra',   tags: ['copy-paste'], dot: true },
+    notes: [1],
+  },
+  'z': {
+    normal:  { char: 'z', label: 'extra cmds',    cat: 'extra',   tags: [], dot: true },
+    shifted: { char: 'Z', label: 'quit',          cat: 'extra',   tags: [], dot: true },
+    notes: [4, 5],
+  },
+  'x': {
+    normal:  { char: 'x', label: 'delete char',   cat: 'command',  tags: ['delete', 'actions'] },
+    shifted: { char: 'X', label: 'backspace',     cat: 'command',  tags: ['delete', 'actions'] },
+    notes: [],
+  },
+  'c': {
+    normal:  { char: 'c', label: 'change',        cat: 'operator', tags: ['operators', 'actions'] },
+    shifted: { char: 'C', label: 'change to eol', cat: 'insert',  tags: ['actions'] },
+    notes: [1, 3],
+  },
+  'v': {
+    normal:  { char: 'v', label: 'visual mode',   cat: 'command',  tags: ['modes'] },
+    shifted: { char: 'V', label: 'visual lines',  cat: 'command',  tags: ['modes'] },
+    notes: [],
+  },
+  'b': {
+    normal:  { char: 'b', label: 'back word',     cat: 'motion',  tags: ['moving'] },
+    shifted: { char: 'B', label: 'back WORD',     cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  'n': {
+    normal:  { char: 'n', label: 'next find',     cat: 'motion',  tags: ['search', 'moving'] },
+    shifted: { char: 'N', label: 'prev find',     cat: 'motion',  tags: ['search', 'moving'] },
+    notes: [],
+  },
+  'm': {
+    normal:  { char: 'm', label: 'set mark',      cat: 'extra',   tags: ['marks'], dot: true },
+    shifted: { char: 'M', label: 'screen mid',    cat: 'motion',  tags: ['moving'] },
+    notes: [],
+  },
+  ',': {
+    normal:  { char: ',', label: 'reverse f/t',   cat: 'motion',  tags: ['moving'] },
+    shifted: { char: '<', label: 'unindent',      cat: 'operator', tags: ['operators'] },
+    notes: [3],
+  },
+  '.': {
+    normal:  { char: '.', label: 'repeat cmd',    cat: 'command',  tags: ['actions'] },
+    shifted: { char: '>', label: 'indent',        cat: 'operator', tags: ['operators'] },
+    notes: [3],
+  },
+  '/': {
+    normal:  { char: '/', label: 'find',          cat: 'extra',   tags: ['search'], dot: true },
+    shifted: { char: '?', label: 'find reverse',  cat: 'extra',   tags: ['search'], dot: true },
+    notes: [],
+  },
+};
+
+var ROWS = [
+  { keys: ['`','1','2','3','4','5','6','7','8','9','0','-','='], offset: 0 },
+  { keys: ['q','w','e','r','t','y','u','i','o','p','[',']','\\'], offset: 0.5 },
+  { keys: ['a','s','d','f','g','h','j','k','l',';',"'"], offset: 0.75 },
+  { keys: ['z','x','c','v','b','n','m',',','.','/'], offset: 1.25 },
+];
+
+var FILTERS = [
+  { id: 'all',       label: 'All' },
+  { id: 'moving',    label: 'Moving' },
+  { id: 'actions',   label: 'Actions' },
+  { id: 'delete',    label: 'Delete' },
+  { id: 'copy-paste',label: 'Copy / Paste' },
+  { id: 'search',    label: 'Search' },
+  { id: 'operators', label: 'Operators' },
+  { id: 'modes',     label: 'Modes' },
+  { id: 'marks',     label: 'Marks' },
+  { id: 'macros',    label: 'Macros' },
+];
+
+var NOTES = {
+  1: 'Use \u201cx before a yank/paste/delete to use register x (x = a\u2026z, *). Example: "ay$ copies rest of line to register a.',
+  2: 'Type a number before any action to repeat it that many times. Examples: 2p, d2w, 5i, d4j.',
+  3: 'Duplicate the operator to act on the current line. Examples: dd (delete line), yy (yank line), >> (indent line).',
+  4: 'ZZ to save & quit, ZQ to quit without saving.',
+  5: 'zt: scroll cursor to top, zb: bottom, zz: center.',
+  6: 'gg: go to top of file, gf: open file under cursor.',
+};
+
+var TEXT_OBJECTS = [
+  { keys: 'iw / aw', label: 'inner/around word' },
+  { keys: 'iW / aW', label: 'inner/around WORD' },
+  { keys: 'is / as', label: 'inner/around sentence' },
+  { keys: 'ip / ap', label: 'inner/around paragraph' },
+  { keys: 'i" / a"', label: 'inner/around double quotes' },
+  { keys: "i' / a'", label: 'inner/around single quotes' },
+  { keys: 'i( / a(', label: 'inner/around parentheses' },
+  { keys: 'i{ / a{', label: 'inner/around braces' },
+  { keys: 'i[ / a[', label: 'inner/around brackets' },
+  { keys: 'it / at', label: 'inner/around XML tag' },
+];
+
+var EX_COMMANDS = [
+  { cmd: ':w',          desc: 'Save file' },
+  { cmd: ':q',          desc: 'Quit' },
+  { cmd: ':q!',         desc: 'Quit without saving' },
+  { cmd: ':wq',         desc: 'Save and quit' },
+  { cmd: ':e file',     desc: 'Open file' },
+  { cmd: ':%s/x/y/g',  desc: 'Replace x with y filewide' },
+  { cmd: ':h topic',    desc: 'Help on topic' },
+  { cmd: ':new',        desc: 'New buffer' },
+];
+
+var CTRL_COMMANDS = [
+  { cmd: 'Ctrl+R', desc: 'Redo' },
+  { cmd: 'Ctrl+F', desc: 'Page down' },
+  { cmd: 'Ctrl+B', desc: 'Page up' },
+  { cmd: 'Ctrl+D', desc: 'Half page down' },
+  { cmd: 'Ctrl+U', desc: 'Half page up' },
+  { cmd: 'Ctrl+E', desc: 'Scroll line down' },
+  { cmd: 'Ctrl+Y', desc: 'Scroll line up' },
+  { cmd: 'Ctrl+V', desc: 'Block-visual mode' },
+];
+
+var CAT_META = {
+  motion:   { label: 'Motion',   color: 'var(--cat-motion)',   desc: 'Moves the cursor or defines range for an operator' },
+  command:  { label: 'Command',  color: 'var(--cat-command)',  desc: 'Direct action command' },
+  insert:   { label: 'Insert',   color: 'var(--cat-insert)',   desc: 'Enters insert mode' },
+  operator: { label: 'Operator', color: 'var(--cat-operator)', desc: 'Requires a motion afterwards; operates between cursor and destination' },
+  extra:    { label: 'Extra',    color: 'var(--cat-extra)',    desc: 'Special function; requires extra character input (shown with \xb7)' },
+  count:    { label: 'Count',    color: 'var(--cat-count)',    desc: 'Number prefix \u2014 type before an action to repeat it' },
+};
+
+// Build reverse lookup: shifted char -> physical key
+var SHIFTED_TO_PHYS = {};
+Object.keys(KEYS).forEach(function(phys) {
+  var data = KEYS[phys];
+  if (data.shifted) { SHIFTED_TO_PHYS[data.shifted.char] = phys; }
+});
+
+// =============================================================================
+// STATE
+// =============================================================================
+var state = {
+  shiftLocked: false,
+  activeFilter: 'all',
+  selectedKey: null,
+  searchQuery: '',
+};
+var physicalShiftHeld = false;
+
+function isShiftActive() {
+  return state.shiftLocked || physicalShiftHeld;
+}
+
+// =============================================================================
+// DOM HELPERS — safe DOM construction (no innerHTML)
+// =============================================================================
+function el(tag, attrs, children) {
+  var node = document.createElement(tag);
+  if (attrs) {
+    Object.keys(attrs).forEach(function(k) {
+      if (k === 'style' && typeof attrs[k] === 'object') {
+        Object.keys(attrs[k]).forEach(function(p) { node.style[p] = attrs[k][p]; });
+      } else if (k === 'className') {
+        node.className = attrs[k];
+      } else if (k.indexOf('data-') === 0) {
+        node.setAttribute(k, attrs[k]);
+      } else {
+        node[k] = attrs[k];
+      }
+    });
+  }
+  if (children) {
+    (Array.isArray(children) ? children : [children]).forEach(function(c) {
+      if (typeof c === 'string') {
+        node.appendChild(document.createTextNode(c));
+      } else if (c) {
+        node.appendChild(c);
+      }
+    });
+  }
+  return node;
+}
+
+function clearEl(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+var $ = function(sel) { return document.querySelector(sel); };
+var $$ = function(sel) { return document.querySelectorAll(sel); };
+
+// =============================================================================
+// RENDERING
+// =============================================================================
+function renderKeyboard() {
+  var kb = $('#keyboard');
+  clearEl(kb);
+  ROWS.forEach(function(row) {
+    var rowEl = el('div', { className: 'kb-row', style: { paddingLeft: 'calc(' + row.offset + ' * var(--key-unit))' } });
+    row.keys.forEach(function(keyId) {
+      var keyEl = el('div', { className: 'key', 'data-key': keyId }, [
+        el('span', { className: 'key-char' }),
+        el('span', { className: 'key-label' }),
+        el('span', { className: 'key-dot' }),
+      ]);
+      keyEl.setAttribute('data-key', keyId);
+      keyEl.addEventListener('mouseenter', function() { showDetail(keyId); });
+      keyEl.addEventListener('click', function(ev) { ev.stopPropagation(); selectKey(keyId); });
+      rowEl.appendChild(keyEl);
+    });
+    kb.appendChild(rowEl);
+  });
+}
+
+function renderFilters() {
+  var cont = $('#filters');
+  clearEl(cont);
+  FILTERS.forEach(function(f) {
+    var btn = el('button', { className: 'filter-btn' + (f.id === state.activeFilter ? ' active' : '') }, f.label);
+    btn.addEventListener('click', function() {
+      state.activeFilter = f.id;
+      $$('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      updateDisplay();
+    });
+    cont.appendChild(btn);
+  });
+}
+
+function renderLegend() {
+  var cont = $('#legend');
+  Object.keys(CAT_META).forEach(function(cat) {
+    var meta = CAT_META[cat];
+    var item = el('div', { className: 'legend-item' }, [
+      el('span', { className: 'legend-dot', style: { background: meta.color } }),
+      document.createTextNode(meta.label),
+    ]);
+    cont.appendChild(item);
+  });
+}
+
+function renderRefList(containerId, items) {
+  var cont = document.getElementById(containerId);
+  items.forEach(function(item) {
+    var row = el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-cmd' }, item.cmd),
+      el('span', { className: 'ref-desc' }, item.desc),
+    ]);
+    cont.appendChild(row);
+  });
+}
+
+function renderTips() {
+  var cont = document.getElementById('tips');
+  var tips = [
+    'word = delimited by punctuation & whitespace; WORD = delimited only by whitespace',
+    'bol = beginning of line, eol = end of line',
+    'Keys marked with \xb7 expect a character argument afterwards',
+    'Operators can be doubled to act on the current line (dd, yy, cc)',
+  ];
+  tips.forEach(function(t) {
+    cont.appendChild(el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-desc' }, t),
+    ]));
+  });
+}
+
+function renderCredit() {
+  var cont = document.getElementById('credit');
+  cont.appendChild(document.createTextNode('Based on the '));
+  var a1 = el('a', { href: 'https://github.com/mattmc3/neovim-cheatsheet', target: '_blank' }, 'neovim-cheatsheet');
+  cont.appendChild(a1);
+  cont.appendChild(document.createTextNode(' by mattmc3 \xb7 Original design by '));
+  var a2 = el('a', { href: 'https://www.viemu.com', target: '_blank' }, 'viemu.com');
+  cont.appendChild(a2);
+}
+
+function updateDisplay() {
+  var shift = isShiftActive();
+  var query = state.searchQuery.toLowerCase();
+
+  // Update shift toggle visual
+  var track = $('#shift-toggle');
+  if (state.shiftLocked || physicalShiftHeld) {
+    track.classList.add('active');
+  } else {
+    track.classList.remove('active');
+  }
+
+  $$('.key').forEach(function(keyEl) {
+    var keyId = keyEl.getAttribute('data-key');
+    var data = KEYS[keyId];
+    var layer = shift ? data.shifted : data.normal;
+
+    // Update displayed content
+    keyEl.querySelector('.key-char').textContent = layer.char;
+    keyEl.querySelector('.key-label').textContent = layer.label;
+    keyEl.querySelector('.key-dot').textContent = layer.dot ? '\xb7' : '';
+    keyEl.setAttribute('data-cat', layer.cat);
+
+    // Determine if key matches current filter + search
+    var otherLayer = shift ? data.normal : data.shifted;
+    var matchesFilter = state.activeFilter === 'all' || layer.tags.indexOf(state.activeFilter) >= 0;
+    var matchesSearch = !query ||
+      layer.label.toLowerCase().indexOf(query) >= 0 ||
+      layer.char.toLowerCase().indexOf(query) >= 0 ||
+      otherLayer.label.toLowerCase().indexOf(query) >= 0 ||
+      otherLayer.char.toLowerCase().indexOf(query) >= 0;
+
+    var active = matchesFilter && matchesSearch;
+    keyEl.classList.toggle('dimmed', !active);
+    keyEl.classList.toggle('selected', state.selectedKey === keyId);
+  });
+}
+
+// =============================================================================
+// DETAIL PANEL
+// =============================================================================
+function showDetail(keyId) {
+  if (state.selectedKey) return;
+  renderDetail(keyId);
+}
+
+function selectKey(keyId) {
+  if (state.selectedKey === keyId) {
+    state.selectedKey = null;
+    renderDetailPlaceholder();
+  } else {
+    state.selectedKey = keyId;
+    renderDetail(keyId);
+  }
+  updateDisplay();
+}
+
+function renderDetailPlaceholder() {
+  var panel = $('#detail');
+  clearEl(panel);
+  panel.appendChild(el('div', { className: 'detail-placeholder' }, 'Hover or click any key to see details. Press keys on your keyboard to explore.'));
+}
+
+function renderDetail(keyId) {
+  var data = KEYS[keyId];
+  var panel = $('#detail');
+  var shift = isShiftActive();
+  var primary = shift ? data.shifted : data.normal;
+  var secondary = shift ? data.normal : data.shifted;
+  var meta = CAT_META[primary.cat];
+  var secMeta = CAT_META[secondary.cat];
+
+  clearEl(panel);
+
+  // Header
+  var headerInfo = el('div', null, [
+    el('div', { className: 'detail-title' }, primary.label),
+    el('span', { className: 'detail-cat', style: { color: meta.color, borderColor: meta.color } }, meta.label),
+  ]);
+  if (primary.dot) {
+    headerInfo.appendChild(document.createTextNode(' '));
+    headerInfo.appendChild(el('span', { style: { color: 'var(--text-dim)', fontSize: '0.75rem' } }, '\xb7 expects character argument'));
+  }
+
+  var header = el('div', { className: 'detail-header' }, [
+    el('span', { className: 'detail-keychar', style: { color: meta.color } }, primary.char),
+    headerInfo,
+  ]);
+  panel.appendChild(header);
+
+  // Body sections
+  var body = el('div', { className: 'detail-body' });
+
+  // Category description
+  var catSection = el('div', { className: 'detail-section' }, [
+    el('h4', null, 'Category'),
+    el('p', null, meta.desc),
+  ]);
+  body.appendChild(catSection);
+
+  // Other layer
+  var otherSection = el('div', { className: 'detail-section' }, [
+    el('h4', null, (shift ? 'Normal' : 'Shifted') + ' (' + secondary.char + ')'),
+    el('p', { style: { color: secMeta.color } }, secondary.label),
+    el('p', { style: { fontSize: '0.75rem', color: 'var(--text-dim)' } }, secMeta.label),
+  ]);
+  body.appendChild(otherSection);
+
+  // Text objects (for operators)
+  if (primary.cat === 'operator') {
+    var toSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Works with text objects')]);
+    var ul = el('ul');
+    TEXT_OBJECTS.forEach(function(to) {
+      var combo = primary.char + to.keys.split(' / ')[0];
+      var li = el('li', null, [
+        el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-operator)' } }, combo),
+        document.createTextNode(' \u2014 ' + to.label),
+      ]);
+      ul.appendChild(li);
+    });
+    toSection.appendChild(ul);
+    body.appendChild(toSection);
+  }
+
+  panel.appendChild(body);
+
+  // Notes
+  if (data.notes.length > 0) {
+    data.notes.forEach(function(n) {
+      var noteDiv = el('div', { className: 'note-ref' }, [
+        el('strong', null, 'Note ' + n + ': '),
+        document.createTextNode(NOTES[n]),
+      ]);
+      panel.appendChild(noteDiv);
+    });
+  }
+}
+
+// =============================================================================
+// EVENT HANDLERS
+// =============================================================================
+function initEvents() {
+  var searchInput = $('#search');
+
+  searchInput.addEventListener('input', function(e) {
+    state.searchQuery = e.target.value;
+    updateDisplay();
+  });
+
+  $('#shift-toggle').addEventListener('click', function() {
+    state.shiftLocked = !state.shiftLocked;
+    updateDisplay();
+    if (state.selectedKey) renderDetail(state.selectedKey);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (document.activeElement === searchInput) return;
+
+    if (e.key === 'Shift') {
+      physicalShiftHeld = true;
+      updateDisplay();
+      if (state.selectedKey) renderDetail(state.selectedKey);
+      return;
+    }
+    if (e.key === 'Escape') {
+      state.selectedKey = null;
+      state.searchQuery = '';
+      searchInput.value = '';
+      renderDetailPlaceholder();
+      updateDisplay();
+      return;
+    }
+
+    var ch = e.key;
+    if (ch.length === 1) {
+      var physKey = ch.toLowerCase();
+      if (KEYS[physKey]) {
+        selectKey(physKey);
+      } else if (SHIFTED_TO_PHYS[ch]) {
+        physKey = SHIFTED_TO_PHYS[ch];
+        if (!isShiftActive()) { state.shiftLocked = true; }
+        selectKey(physKey);
+      }
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('keyup', function(e) {
+    if (e.key === 'Shift') {
+      physicalShiftHeld = false;
+      updateDisplay();
+      if (state.selectedKey) renderDetail(state.selectedKey);
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.key') && !e.target.closest('.detail-panel')) {
+      state.selectedKey = null;
+      renderDetailPlaceholder();
+      updateDisplay();
+    }
+  });
+}
+
+// =============================================================================
+// INIT
+// =============================================================================
+function init() {
+  renderKeyboard();
+  renderFilters();
+  renderLegend();
+  renderRefList('ex-cmds', EX_COMMANDS);
+  renderRefList('ctrl-cmds', CTRL_COMMANDS);
+  renderTips();
+  renderCredit();
+  renderDetailPlaceholder();
+  updateDisplay();
+  initEvents();
+}
+
+init();
+</script>
+</body>
+</html>
