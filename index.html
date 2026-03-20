@@ -458,7 +458,7 @@ html[data-theme="light"] .key:active {
 <div class="container">
   <header>
     <h1>NeoVim Interactive Cheatsheet</h1>
-    <p class="subtitle">Hover, click, or press keys &middot; Hold Shift to see the shifted layer</p>
+    <p class="subtitle">Hover, click, or press keys &middot; Hold Shift for shifted layer &middot; &larr;&rarr; categories &middot; &uarr;&darr; levels</p>
   </header>
 
   <div class="controls">
@@ -1243,7 +1243,48 @@ function initEvents() {
     localStorage.setItem('vim-cheat-theme', theme);
   });
 
+  // Helper: switch to a filter by index
+  function setFilterByIndex(idx) {
+    if (idx < 0) idx = FILTERS.length - 1;
+    if (idx >= FILTERS.length) idx = 0;
+    var f = FILTERS[idx];
+    state.activeFilter = f.id;
+    var def = LEVEL_DEFS[f.id];
+    state.activeLevel = def ? def.max : 99;
+    $$('.filter-btn').forEach(function(b, i) {
+      b.classList.toggle('active', i === idx);
+    });
+    renderLevelBar();
+    updateDisplay();
+  }
+
+  // Helper: change level within current filter
+  function adjustLevel(delta) {
+    var def = LEVEL_DEFS[state.activeFilter];
+    if (!def || def.max <= 1) return;
+    var next = state.activeLevel + delta;
+    if (next < 1) next = 1;
+    if (next > def.max) next = def.max;
+    if (next === state.activeLevel) return;
+    state.activeLevel = next;
+    renderLevelBar();
+    updateDisplay();
+  }
+
   document.addEventListener('keydown', function(e) {
+    // Arrow keys work even when search is focused
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      var curIdx = FILTERS.findIndex(function(f) { return f.id === state.activeFilter; });
+      setFilterByIndex(curIdx + (e.key === 'ArrowRight' ? 1 : -1));
+      e.preventDefault();
+      return;
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      adjustLevel(e.key === 'ArrowUp' ? 1 : -1);
+      e.preventDefault();
+      return;
+    }
+
     if (document.activeElement === searchInput) return;
 
     if (e.key === 'Shift') {
