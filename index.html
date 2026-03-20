@@ -137,12 +137,6 @@ header .subtitle {
   border-color: var(--cat-extra);
 }
 
-.controls-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
 /* Shift toggle */
 .shift-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
 .toggle-track {
@@ -179,6 +173,48 @@ header .subtitle {
 .kb-row {
   display: flex;
   gap: var(--key-gap);
+}
+
+/* Esc row: Esc key + inline controls panel */
+.kb-row-esc {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.kb-esc-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.kb-esc-controls .legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.kb-esc-controls .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-sub);
+}
+.kb-esc-controls .legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.kb-esc-controls .shift-toggle,
+.kb-esc-controls .theme-toggle {
+  margin-left: auto;
+}
+.kb-esc-spacer { flex: 1; }
+.key-esc {
+  width: auto;
+  padding: 0 14px;
+  height: var(--key-size);
 }
 
 /* === KEY === */
@@ -322,7 +358,7 @@ header .subtitle {
 .reference {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
 .ref-card {
@@ -467,31 +503,12 @@ html[data-theme="light"] .key:active {
     </div>
     <div class="filters" id="filters"></div>
     <div class="level-bar hidden" id="level-bar"></div>
-    <div class="controls-row">
-      <div class="shift-toggle">
-        <span>Shift</span>
-        <div class="toggle-track" id="shift-toggle">
-          <div class="toggle-thumb"></div>
-        </div>
-      </div>
-      <div class="theme-toggle">
-        <span>Theme</span>
-        <select class="theme-select" id="theme-select">
-          <option value="dark">Dark</option>
-          <option value="light">Light</option>
-        </select>
-      </div>
-    </div>
   </div>
 
   <div class="keyboard" id="keyboard"></div>
   <div class="detail-panel" id="detail"></div>
 
   <div class="reference">
-    <div class="ref-card">
-      <h3>Legend</h3>
-      <div class="legend-items" id="legend"></div>
-    </div>
     <div class="ref-card">
       <h3>Important ex commands</h3>
       <div class="ref-list" id="ex-cmds"></div>
@@ -519,6 +536,11 @@ html[data-theme="light"] .key:active {
 // dot: true if the key expects a follow-up character argument
 
 var KEYS = {
+  'Escape': {
+    normal:  { char: 'Esc', label: 'normal mode', cat: 'command', tags: ['modes'] },
+    shifted: { char: 'Esc', label: 'normal mode', cat: 'command', tags: ['modes'] },
+    notes: [],
+  },
   '`': {
     normal:  { char: '`', label: 'goto mark',    cat: 'extra',    tags: ['marks'], dot: true },
     shifted: { char: '~', label: 'toggle case',  cat: 'command',  tags: ['actions'] },
@@ -959,21 +981,61 @@ var $$ = function(sel) { return document.querySelectorAll(sel); };
 // =============================================================================
 // RENDERING
 // =============================================================================
+function makeKeyEl(keyId, extraClass) {
+  var keyEl = el('div', { className: 'key' + (extraClass ? ' ' + extraClass : '') }, [
+    el('span', { className: 'key-char' }),
+    el('span', { className: 'key-label' }),
+    el('span', { className: 'key-dot' }),
+  ]);
+  keyEl.setAttribute('data-key', keyId);
+  keyEl.addEventListener('mouseenter', function() { showDetail(keyId); });
+  keyEl.addEventListener('click', function(ev) { ev.stopPropagation(); selectKey(keyId); });
+  return keyEl;
+}
+
 function renderKeyboard() {
   var kb = $('#keyboard');
   clearEl(kb);
+
+  // Esc row: Esc key + legend + toggles
+  var escRow = el('div', { className: 'kb-row-esc' });
+  escRow.appendChild(makeKeyEl('Escape', 'key-esc'));
+
+  var controls = el('div', { className: 'kb-esc-controls' });
+  // Legend
+  var legendWrap = el('div', { className: 'legend-items', id: 'legend' });
+  controls.appendChild(legendWrap);
+  // Spacer
+  controls.appendChild(el('div', { className: 'kb-esc-spacer' }));
+  // Shift toggle
+  var shiftToggle = el('div', { className: 'shift-toggle' }, [
+    el('span', null, 'Shift'),
+  ]);
+  var shiftTrack = el('div', { className: 'toggle-track', id: 'shift-toggle' }, [
+    el('div', { className: 'toggle-thumb' }),
+  ]);
+  shiftToggle.appendChild(shiftTrack);
+  controls.appendChild(shiftToggle);
+  // Theme toggle
+  var themeToggle = el('div', { className: 'theme-toggle' }, [
+    el('span', null, 'Theme'),
+  ]);
+  var themeSelect = el('select', { className: 'theme-select', id: 'theme-select' });
+  var optDark = el('option', { value: 'dark' }, 'Dark');
+  var optLight = el('option', { value: 'light' }, 'Light');
+  themeSelect.appendChild(optDark);
+  themeSelect.appendChild(optLight);
+  themeToggle.appendChild(themeSelect);
+  controls.appendChild(themeToggle);
+
+  escRow.appendChild(controls);
+  kb.appendChild(escRow);
+
+  // Main key rows
   ROWS.forEach(function(row) {
     var rowEl = el('div', { className: 'kb-row', style: { paddingLeft: 'calc(' + row.offset + ' * var(--key-unit))' } });
     row.keys.forEach(function(keyId) {
-      var keyEl = el('div', { className: 'key', 'data-key': keyId }, [
-        el('span', { className: 'key-char' }),
-        el('span', { className: 'key-label' }),
-        el('span', { className: 'key-dot' }),
-      ]);
-      keyEl.setAttribute('data-key', keyId);
-      keyEl.addEventListener('mouseenter', function() { showDetail(keyId); });
-      keyEl.addEventListener('click', function(ev) { ev.stopPropagation(); selectKey(keyId); });
-      rowEl.appendChild(keyEl);
+      rowEl.appendChild(makeKeyEl(keyId));
     });
     kb.appendChild(rowEl);
   });
@@ -1294,11 +1356,15 @@ function initEvents() {
       return;
     }
     if (e.key === 'Escape') {
-      state.selectedKey = null;
-      state.searchQuery = '';
-      searchInput.value = '';
-      renderDetailPlaceholder();
-      updateDisplay();
+      if (state.selectedKey || state.searchQuery) {
+        state.selectedKey = null;
+        state.searchQuery = '';
+        searchInput.value = '';
+        renderDetailPlaceholder();
+        updateDisplay();
+      } else {
+        selectKey('Escape');
+      }
       return;
     }
 
