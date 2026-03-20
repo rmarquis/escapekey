@@ -373,6 +373,44 @@ header .subtitle {
 }
 .credit a { color: var(--text-dim); text-decoration: underline; }
 
+/* Level selector */
+.level-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  min-height: 28px;
+}
+.level-bar.hidden { display: none; }
+.level-btns { display: flex; gap: 4px; }
+.level-btn {
+  width: 28px; height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.level-btn:hover { color: var(--text); border-color: var(--text-dim); }
+.level-btn.active {
+  background: var(--cat-extra);
+  color: var(--bg);
+  border-color: var(--cat-extra);
+  font-weight: 600;
+}
+.level-label {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  margin-left: 4px;
+}
+
 /* Theme selector */
 .theme-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
 .theme-select {
@@ -428,6 +466,7 @@ html[data-theme="light"] .key:active {
       <input type="text" id="search" placeholder="Search commands..." autocomplete="off">
     </div>
     <div class="filters" id="filters"></div>
+    <div class="level-bar hidden" id="level-bar"></div>
     <div class="controls-row">
       <div class="shift-toggle">
         <span>Shift</span>
@@ -790,6 +829,75 @@ var CAT_META = {
   count:    { label: 'Count',    color: 'var(--cat-count)',    desc: 'Number prefix \u2014 type before an action to repeat it' },
 };
 
+// Level definitions per filter category.
+// For each physical key, n = normal layer level, s = shifted layer level.
+// Keys with the tag but not listed here default to the max level.
+var LEVEL_DEFS = {
+  moving: {
+    max: 3,
+    labels: ['Basic', 'Intermediate', 'Advanced'],
+    keys: {
+      'h': { n: 1 }, 'j': { n: 1 }, 'k': { n: 1 }, 'l': { n: 1 },
+      'w': { n: 1, s: 2 }, 'b': { n: 1, s: 2 }, 'e': { n: 1, s: 2 },
+      '0': { n: 1, s: 2 }, '4': { s: 1 },
+      '6': { s: 2 }, '-': { n: 2, s: 2 }, '=': { s: 2 },
+      '9': { s: 2 }, '[': { s: 2 }, ']': { s: 2 },
+    }
+  },
+  actions: {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      'x': { n: 1 }, 'u': { n: 1 }, '.': { n: 1 }, '`': { s: 1 },
+    }
+  },
+  'delete': {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      'd': { n: 1, s: 1 }, 'x': { n: 1 },
+    }
+  },
+  'copy-paste': {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      'y': { n: 1 }, 'p': { n: 1 },
+    }
+  },
+  search: {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      '/': { n: 1 }, 'n': { n: 1, s: 1 },
+    }
+  },
+  operators: {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      'd': { n: 1 }, 'c': { n: 1 }, 'y': { n: 1 },
+    }
+  },
+  modes: {
+    max: 2,
+    labels: ['Basic', 'Full'],
+    keys: {
+      'i': { n: 1 }, 'v': { n: 1 }, ';': { s: 1 },
+    }
+  },
+};
+
+// Returns the level at which a key+layer becomes visible for a given tag
+function getKeyLevel(keyId, isShifted, tag) {
+  var def = LEVEL_DEFS[tag];
+  if (!def) return 1;
+  var keyLevels = def.keys[keyId];
+  if (!keyLevels) return def.max;
+  var l = isShifted ? keyLevels.s : keyLevels.n;
+  return l !== undefined ? l : def.max;
+}
+
 // Build reverse lookup: shifted char -> physical key
 var SHIFTED_TO_PHYS = {};
 Object.keys(KEYS).forEach(function(phys) {
@@ -803,6 +911,7 @@ Object.keys(KEYS).forEach(function(phys) {
 var state = {
   shiftLocked: false,
   activeFilter: 'all',
+  activeLevel: 99,
   selectedKey: null,
   searchQuery: '',
 };
@@ -877,12 +986,43 @@ function renderFilters() {
     var btn = el('button', { className: 'filter-btn' + (f.id === state.activeFilter ? ' active' : '') }, f.label);
     btn.addEventListener('click', function() {
       state.activeFilter = f.id;
+      var def = LEVEL_DEFS[f.id];
+      state.activeLevel = def ? def.max : 99;
       $$('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
+      renderLevelBar();
       updateDisplay();
     });
     cont.appendChild(btn);
   });
+}
+
+function renderLevelBar() {
+  var bar = $('#level-bar');
+  clearEl(bar);
+  var def = LEVEL_DEFS[state.activeFilter];
+  if (!def || def.max <= 1) {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  bar.appendChild(el('span', null, 'Level:'));
+  var btns = el('div', { className: 'level-btns' });
+  for (var i = 1; i <= def.max; i++) {
+    (function(level) {
+      var btn = el('button', { className: 'level-btn' + (state.activeLevel >= level ? ' active' : '') }, String(level));
+      btn.addEventListener('click', function() {
+        state.activeLevel = level;
+        renderLevelBar();
+        updateDisplay();
+      });
+      btns.appendChild(btn);
+    })(i);
+  }
+  bar.appendChild(btns);
+  if (def.labels && def.labels[state.activeLevel - 1]) {
+    bar.appendChild(el('span', { className: 'level-label' }, def.labels[state.activeLevel - 1]));
+  }
 }
 
 function renderLegend() {
@@ -956,9 +1096,11 @@ function updateDisplay() {
     keyEl.querySelector('.key-dot').textContent = layer.dot ? '\xb7' : '';
     keyEl.setAttribute('data-cat', layer.cat);
 
-    // Determine if key matches current filter + search
+    // Determine if key matches current filter + search + level
     var otherLayer = shift ? data.normal : data.shifted;
-    var matchesFilter = state.activeFilter === 'all' || layer.tags.indexOf(state.activeFilter) >= 0;
+    var matchesFilter = state.activeFilter === 'all' ||
+      (layer.tags.indexOf(state.activeFilter) >= 0 &&
+       getKeyLevel(keyId, shift, state.activeFilter) <= state.activeLevel);
     var matchesSearch = !query ||
       layer.label.toLowerCase().indexOf(query) >= 0 ||
       layer.char.toLowerCase().indexOf(query) >= 0 ||
