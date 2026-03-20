@@ -25,7 +25,7 @@
   --cat-extra: #bb9af7;
   --cat-count: #565f89;
 
-  --key-size: 62px;
+  --key-size: 72px;
   --key-gap: 5px;
   --key-unit: calc(var(--key-size) + var(--key-gap));
   --key-radius: 7px;
@@ -61,7 +61,7 @@ body {
 
 .container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1280px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -237,12 +237,12 @@ header .subtitle {
 
 .key-char {
   font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1;
 }
 .key-label {
-  font-size: 8.5px;
+  font-size: 10px;
   line-height: 1.15;
   color: var(--text-sub);
   text-align: center;
@@ -402,12 +402,12 @@ html[data-theme="light"] .key:active {
 }
 
 /* === RESPONSIVE === */
-@media (max-width: 1000px) {
-  :root { --key-size: 52px; }
-  .key-char { font-size: 13px; }
-  .key-label { font-size: 7.5px; }
+@media (max-width: 1200px) {
+  :root { --key-size: 58px; }
+  .key-char { font-size: 15px; }
+  .key-label { font-size: 9px; }
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   :root { --key-size: 42px; }
   .key-char { font-size: 11px; }
   .key-label { font-size: 0; visibility: hidden; }
