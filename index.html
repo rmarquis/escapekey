@@ -245,6 +245,11 @@ header .subtitle {
 .key-faded.dimmed:hover {
   opacity: 0.3;
 }
+.key-pressed {
+  opacity: 1 !important;
+  transform: translateY(1px);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 1px 1px rgba(0,0,0,0.15);
+}
 
 /* === KEY === */
 .key {
@@ -1061,6 +1066,7 @@ var state = {
   searchQuery: '',
 };
 var physicalShiftHeld = false;
+var physicalKeysHeld = {};
 
 function isShiftActive() {
   return state.shiftLocked || physicalShiftHeld;
@@ -1304,6 +1310,13 @@ function updateDisplay() {
     var active = matchesFilter && matchesSearch;
     keyEl.classList.toggle('dimmed', !active);
     keyEl.classList.toggle('selected', state.selectedKey === keyId);
+
+    // Unfade faded keys when physically pressed
+    if (FADED_KEYS[keyId]) {
+      var isHeld = !!physicalKeysHeld[keyId];
+      keyEl.classList.toggle('key-faded', !isHeld);
+      keyEl.classList.toggle('key-pressed', isHeld);
+    }
   });
 }
 
@@ -1504,6 +1517,19 @@ function initEvents() {
 
     if (document.activeElement === searchInput) return;
 
+    // Track physical modifier/faded key presses for visual feedback
+    var fadedKeyMap = {
+      'Shift': e.location === 2 ? 'RShift' : 'LShift',
+      'Control': e.location === 2 ? 'RCtrl' : 'LCtrl',
+      'Alt': e.location === 2 ? 'RAlt' : 'LAlt',
+      'Meta': e.location === 2 ? 'RMeta' : 'LMeta',
+      'CapsLock': 'CapsLock', 'Tab': 'Tab',
+      'Backspace': 'Backspace', 'Enter': 'Enter', ' ': 'Space',
+    };
+    if (fadedKeyMap[e.key]) {
+      physicalKeysHeld[fadedKeyMap[e.key]] = true;
+    }
+
     if (e.key === 'Shift') {
       physicalShiftHeld = true;
       updateDisplay();
@@ -1550,6 +1576,20 @@ function initEvents() {
   });
 
   document.addEventListener('keyup', function(e) {
+    // Clear physical held state for faded keys
+    var fadedKeyMap = {
+      'Shift': e.location === 2 ? 'RShift' : 'LShift',
+      'Control': e.location === 2 ? 'RCtrl' : 'LCtrl',
+      'Alt': e.location === 2 ? 'RAlt' : 'LAlt',
+      'Meta': e.location === 2 ? 'RMeta' : 'LMeta',
+      'CapsLock': 'CapsLock', 'Tab': 'Tab',
+      'Backspace': 'Backspace', 'Enter': 'Enter', ' ': 'Space',
+    };
+    if (fadedKeyMap[e.key]) {
+      delete physicalKeysHeld[fadedKeyMap[e.key]];
+      updateDisplay();
+    }
+
     if (e.key === 'Shift') {
       physicalShiftHeld = false;
       updateDisplay();
