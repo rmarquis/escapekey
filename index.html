@@ -91,27 +91,6 @@ header .subtitle {
   width: 100%;
 }
 
-.search-box { position: relative; width: 280px; }
-.search-box input {
-  width: 100%;
-  padding: 8px 12px 8px 32px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 0.85rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.search-box input:focus { border-color: var(--cat-extra); }
-.search-box::before {
-  content: '\2315';
-  position: absolute;
-  left: 10px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-dim);
-  font-size: 1rem;
-}
 
 .filters {
   display: flex;
@@ -206,11 +185,35 @@ header .subtitle {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.kb-esc-controls .shift-toggle,
-.kb-esc-controls .theme-toggle {
+.kb-esc-controls .shift-toggle {
   margin-left: auto;
 }
-.kb-esc-spacer { flex: 1; }
+.kb-esc-search {
+  flex: 1;
+  position: relative;
+  min-width: 120px;
+  max-width: 280px;
+}
+.kb-esc-search input {
+  width: 100%;
+  padding: 6px 10px 6px 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.kb-esc-search input:focus { border-color: var(--cat-extra); }
+.kb-esc-search::before {
+  content: '\2315';
+  position: absolute;
+  left: 8px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
 .key-esc {
   width: auto;
   padding: 0 14px;
@@ -534,9 +537,6 @@ html[data-theme="light"] .key:active {
   </header>
 
   <div class="controls">
-    <div class="search-box">
-      <input type="text" id="search" placeholder="Search commands..." autocomplete="off">
-    </div>
     <div class="filters" id="filters"></div>
     <div class="level-bar hidden" id="level-bar"></div>
   </div>
@@ -1143,8 +1143,11 @@ function renderKeyboard() {
   // Legend
   var legendWrap = el('div', { className: 'legend-items', id: 'legend' });
   controls.appendChild(legendWrap);
-  // Spacer
-  controls.appendChild(el('div', { className: 'kb-esc-spacer' }));
+  // Search box
+  var searchBox = el('div', { className: 'kb-esc-search' });
+  var searchInput = el('input', { type: 'text', id: 'search', placeholder: 'Search commands...', autocomplete: 'off' });
+  searchBox.appendChild(searchInput);
+  controls.appendChild(searchBox);
   // Shift toggle
   var shiftToggle = el('div', { className: 'shift-toggle' }, [
     el('span', null, 'Shift'),
