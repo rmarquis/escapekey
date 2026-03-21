@@ -985,13 +985,15 @@ var CAT_META = {
 var LEVEL_DEFS = {
   moving: {
     max: 3,
-    labels: ['Basic', 'Intermediate', 'Advanced'],
+    labels: [],
     keys: {
       'h': { n: 1 }, 'j': { n: 1 }, 'k': { n: 1 }, 'l': { n: 1 },
-      'w': { n: 1, s: 2 }, 'b': { n: 1, s: 2 }, 'e': { n: 1, s: 2 },
-      '0': { n: 1, s: 2 }, '4': { s: 1 },
-      '6': { s: 2 }, '-': { n: 2, s: 2 }, '=': { s: 2 },
-      '9': { s: 2 }, '[': { s: 2 }, ']': { s: 2 },
+      '0': { n: 1 }, '4': { s: 1 }, '6': { s: 1 },
+      'w': { n: 2, s: 2 }, 'b': { n: 2, s: 2 }, 'e': { n: 2, s: 2 },
+      'f': { n: 3, s: 3 }, 't': { n: 3, s: 3 },
+      ',': { n: 3 }, ';': { n: 3 },
+      '-': { n: 3, s: 3 }, '=': { s: 3 },
+      '9': { s: 3 }, '[': { s: 3 }, ']': { s: 3 },
     }
   },
   actions: {
@@ -1038,14 +1040,15 @@ var LEVEL_DEFS = {
   },
 };
 
-// Returns the level at which a key+layer becomes visible for a given tag
+// Returns the level (group) a key belongs to for a given tag.
+// Returns 99 if not assigned to any group (only visible in Full).
 function getKeyLevel(keyId, isShifted, tag) {
   var def = LEVEL_DEFS[tag];
   if (!def) return 1;
   var keyLevels = def.keys[keyId];
-  if (!keyLevels) return def.max;
+  if (!keyLevels) return 99;
   var l = isShifted ? keyLevels.s : keyLevels.n;
-  return l !== undefined ? l : def.max;
+  return l !== undefined ? l : 99;
 }
 
 // Build reverse lookup: shifted char -> physical key
@@ -1190,7 +1193,7 @@ function renderFilters() {
     btn.addEventListener('click', function() {
       state.activeFilter = f.id;
       var def = LEVEL_DEFS[f.id];
-      state.activeLevel = def ? def.max : 99;
+      state.activeLevel = def ? 1 : 99;
       $$('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
       renderLevelBar();
@@ -1213,7 +1216,7 @@ function renderLevelBar() {
   var btns = el('div', { className: 'level-btns' });
   for (var i = 1; i <= def.max; i++) {
     (function(level) {
-      var btn = el('button', { className: 'level-btn' + (state.activeLevel >= level ? ' active' : '') }, String(level));
+      var btn = el('button', { className: 'level-btn' + (state.activeLevel === level ? ' active' : '') }, String(level));
       btn.addEventListener('click', function() {
         state.activeLevel = level;
         renderLevelBar();
@@ -1222,8 +1225,16 @@ function renderLevelBar() {
       btns.appendChild(btn);
     })(i);
   }
+  // Full button
+  var fullBtn = el('button', { className: 'level-btn' + (state.activeLevel === 99 ? ' active' : '') }, 'Full');
+  fullBtn.addEventListener('click', function() {
+    state.activeLevel = 99;
+    renderLevelBar();
+    updateDisplay();
+  });
+  btns.appendChild(fullBtn);
   bar.appendChild(btns);
-  if (def.labels && def.labels[state.activeLevel - 1]) {
+  if (def.labels && state.activeLevel !== 99 && def.labels[state.activeLevel - 1]) {
     bar.appendChild(el('span', { className: 'level-label' }, def.labels[state.activeLevel - 1]));
   }
 }
@@ -1303,7 +1314,7 @@ function updateDisplay() {
     var otherLayer = shift ? data.normal : data.shifted;
     var matchesFilter = state.activeFilter === 'all' ||
       (layer.tags.indexOf(state.activeFilter) >= 0 &&
-       getKeyLevel(keyId, shift, state.activeFilter) <= state.activeLevel);
+       (state.activeLevel === 99 || getKeyLevel(keyId, shift, state.activeFilter) === state.activeLevel));
     var matchesSearch = !query ||
       layer.label.toLowerCase().indexOf(query) >= 0 ||
       layer.char.toLowerCase().indexOf(query) >= 0 ||
@@ -1483,7 +1494,7 @@ function initEvents() {
     var f = FILTERS[idx];
     state.activeFilter = f.id;
     var def = LEVEL_DEFS[f.id];
-    state.activeLevel = def ? def.max : 99;
+    state.activeLevel = def ? 1 : 99;
     $$('.filter-btn').forEach(function(b, i) {
       b.classList.toggle('active', i === idx);
     });
@@ -1492,14 +1503,19 @@ function initEvents() {
   }
 
   // Helper: change level within current filter
+  // Levels cycle: 1, 2, ..., max, 99 (Full)
   function adjustLevel(delta) {
     var def = LEVEL_DEFS[state.activeFilter];
     if (!def || def.max <= 1) return;
-    var next = state.activeLevel + delta;
-    if (next < 1) next = 1;
-    if (next > def.max) next = def.max;
-    if (next === state.activeLevel) return;
-    state.activeLevel = next;
+    var steps = [];
+    for (var i = 1; i <= def.max; i++) steps.push(i);
+    steps.push(99);
+    var curIdx = steps.indexOf(state.activeLevel);
+    var nextIdx = curIdx + delta;
+    if (nextIdx < 0) nextIdx = 0;
+    if (nextIdx >= steps.length) nextIdx = steps.length - 1;
+    if (nextIdx === curIdx) return;
+    state.activeLevel = steps[nextIdx];
     renderLevelBar();
     updateDisplay();
   }
