@@ -338,8 +338,13 @@ header .subtitle {
 }
 
 /* === DETAIL PANEL === */
-.detail-panel {
+.bottom-panels {
+  display: flex;
+  gap: 12px;
   width: 100%;
+}
+.detail-panel, .lesson-panel {
+  flex: 1;
   min-height: 100px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -347,6 +352,46 @@ header .subtitle {
   padding: 16px 20px;
   font-size: 0.85rem;
   line-height: 1.5;
+}
+.lesson-panel h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.lesson-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.lesson-item:hover { background: var(--bg-key); }
+.lesson-item.active { background: var(--bg-key); }
+.lesson-char {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+.lesson-label {
+  color: var(--text-sub);
+  font-size: 0.8rem;
+}
+.lesson-empty {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 12px;
 }
 .detail-placeholder { color: var(--text-dim); text-align: center; padding: 12px; }
 
@@ -529,6 +574,7 @@ html[data-theme="light"] .key:active {
   .key-char { font-size: 11px; }
   .key-label { font-size: 0; visibility: hidden; }
   .key-dot { font-size: 10px; }
+  .bottom-panels { flex-direction: column; }
   .reference { grid-template-columns: 1fr; }
 }
 </style>
@@ -547,7 +593,10 @@ html[data-theme="light"] .key:active {
   </div>
 
   <div class="keyboard" id="keyboard"></div>
-  <div class="detail-panel" id="detail"></div>
+  <div class="bottom-panels">
+    <div class="detail-panel" id="detail"></div>
+    <div class="lesson-panel" id="lesson"></div>
+  </div>
 
   <div class="reference">
     <div class="ref-card">
@@ -1336,6 +1385,7 @@ function updateDisplay() {
       keyEl.classList.toggle('key-pressed', isHeld);
     }
   });
+  renderLesson();
 }
 
 // =============================================================================
@@ -1361,6 +1411,66 @@ function renderDetailPlaceholder() {
   var panel = $('#detail');
   clearEl(panel);
   panel.appendChild(el('div', { className: 'detail-placeholder' }, 'Hover or click any key to see details. Press keys on your keyboard to explore.'));
+}
+
+function renderLesson() {
+  var panel = $('#lesson');
+  clearEl(panel);
+  var tag = state.activeFilter;
+  var level = state.activeLevel;
+  var shift = isShiftActive();
+
+  if (tag === 'all') {
+    panel.appendChild(el('div', { className: 'lesson-empty' }, 'Select a category to see its lesson keys.'));
+    return;
+  }
+
+  var def = LEVEL_DEFS[tag];
+  var filterMeta = FILTERS.find(function(f) { return f.id === tag; });
+  var title = filterMeta ? filterMeta.label : tag;
+  if (level !== 99) title += ' \u2014 Level ' + level;
+  panel.appendChild(el('h3', null, title));
+
+  // Collect keys matching this filter + level
+  var items = [];
+  Object.keys(KEYS).forEach(function(keyId) {
+    var data = KEYS[keyId];
+    // Check normal layer
+    if (data.normal.tags.indexOf(tag) >= 0) {
+      var kl = getKeyLevel(keyId, false, tag);
+      if (level === 99 || kl === level) {
+        items.push({ keyId: keyId, char: data.normal.char, label: data.normal.label, cat: data.normal.cat, shifted: false });
+      }
+    }
+    // Check shifted layer
+    if (data.shifted.tags.indexOf(tag) >= 0) {
+      var kls = getKeyLevel(keyId, true, tag);
+      if (level === 99 || kls === level) {
+        items.push({ keyId: keyId, char: data.shifted.char, label: data.shifted.label, cat: data.shifted.cat, shifted: true });
+      }
+    }
+  });
+
+  if (items.length === 0) {
+    panel.appendChild(el('div', { className: 'lesson-empty' }, 'No keys at this level.'));
+    return;
+  }
+
+  var list = el('ul', { className: 'lesson-list' });
+  items.forEach(function(item) {
+    var meta = CAT_META[item.cat];
+    var li = el('li', {
+      className: 'lesson-item' + (state.selectedKey === item.keyId ? ' active' : '')
+    }, [
+      el('span', { className: 'lesson-char', style: { color: meta.color } }, item.char),
+      el('span', { className: 'lesson-label' }, item.label),
+    ]);
+    li.addEventListener('click', function() {
+      selectKey(item.keyId);
+    });
+    list.appendChild(li);
+  });
+  panel.appendChild(list);
 }
 
 function renderDetail(keyId) {
@@ -1621,7 +1731,7 @@ function initEvents() {
   });
 
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.key') && !e.target.closest('.detail-panel')) {
+    if (!e.target.closest('.key') && !e.target.closest('.detail-panel') && !e.target.closest('.lesson-panel')) {
       state.selectedKey = null;
       renderDetailPlaceholder();
       updateDisplay();
