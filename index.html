@@ -588,7 +588,7 @@ html[data-theme="light"] .key:active {
 
   <div class="controls">
     <div class="filters" id="filters"></div>
-    <div class="level-bar hidden" id="level-bar"></div>
+    <div class="level-bar" id="level-bar"></div>
     <p class="usage-hint">Hover, click, or press keys &middot; Hold Shift for shifted layer &middot; &larr;&rarr; categories &middot; &uarr;&darr; levels</p>
   </div>
 
@@ -1260,11 +1260,11 @@ function renderLevelBar() {
   var bar = $('#level-bar');
   clearEl(bar);
   var def = LEVEL_DEFS[state.activeFilter];
+  bar.classList.remove('hidden');
   if (!def || def.max <= 1) {
-    bar.classList.add('hidden');
+    bar.appendChild(el('span', { style: { color: 'var(--text-dim)' } }, 'Select a category to see levels'));
     return;
   }
-  bar.classList.remove('hidden');
   bar.appendChild(el('span', null, 'Level:'));
   var btns = el('div', { className: 'level-btns' });
   for (var i = 1; i <= def.max; i++) {
