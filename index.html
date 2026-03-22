@@ -984,16 +984,15 @@ var CAT_META = {
 // Keys with the tag but not listed here default to the max level.
 var LEVEL_DEFS = {
   moving: {
-    max: 3,
+    max: 4,
     labels: [],
     keys: {
-      'h': { n: 1 }, 'j': { n: 1 }, 'k': { n: 1 }, 'l': { n: 1 },
+      'h': { n: 1, s: 4 }, 'j': { n: 1 }, 'k': { n: 1 }, 'l': { n: 1, s: 4 },
       '0': { n: 1 }, '4': { s: 1 }, '6': { s: 1 },
       'w': { n: 2, s: 2 }, 'b': { n: 2, s: 2 }, 'e': { n: 2, s: 2 },
       'f': { n: 3, s: 3 }, 't': { n: 3, s: 3 },
       ',': { n: 3 }, ';': { n: 3 },
-      '-': { n: 3, s: 3 }, '=': { s: 3 },
-      '9': { s: 3 }, '[': { s: 3 }, ']': { s: 3 },
+      'm': { s: 4 },
     }
   },
   actions: {
