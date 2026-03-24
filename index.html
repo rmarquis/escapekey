@@ -31,7 +31,6 @@
   --key-radius: 7px;
 }
 
-/* Light theme overrides */
 html[data-theme="light"] {
   --bg: #f0f0f5;
   --bg-above: #e4e4ec;
@@ -120,7 +119,6 @@ header .subtitle {
   border-color: var(--cat-extra);
 }
 
-/* Shift toggle */
 .shift-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
 .toggle-track {
   width: 38px; height: 20px;
@@ -158,7 +156,6 @@ header .subtitle {
   gap: var(--key-gap);
 }
 
-/* Esc row: Esc key + inline controls panel */
 .kb-row-esc {
   display: flex;
   gap: 16px;
@@ -223,7 +220,6 @@ header .subtitle {
   padding: 0 14px;
   height: var(--key-size);
 }
-/* Wide keys */
 .key-wide {
   font-size: 11px;
   letter-spacing: -0.02em;
@@ -239,7 +235,6 @@ header .subtitle {
   flex: 1;
   width: auto !important;
 }
-/* Faded modifier/non-primary keys */
 .key-faded {
   opacity: 0.45;
 }
@@ -272,7 +267,7 @@ header .subtitle {
   cursor: pointer;
   position: relative;
   border: 1px solid transparent;
-  border-bottom: 3px solid transparent;
+  border-bottom: 3px solid var(--cat-color, transparent);
   transition: all 0.15s ease;
   box-shadow: 0 1px 0 1px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.15);
 }
@@ -297,26 +292,20 @@ header .subtitle {
   opacity: 0.4;
 }
 
-/* Category colors — applied as border-bottom + char color */
-.key[data-cat="motion"]  { border-bottom-color: var(--cat-motion); }
-.key[data-cat="command"] { border-bottom-color: var(--cat-command); }
-.key[data-cat="insert"]  { border-bottom-color: var(--cat-insert); }
-.key[data-cat="operator"]{ border-bottom-color: var(--cat-operator); }
-.key[data-cat="extra"]   { border-bottom-color: var(--cat-extra); }
-.key[data-cat="count"]   { border-bottom-color: var(--cat-count); }
-
-.key[data-cat="motion"]  .key-char { color: var(--cat-motion); }
-.key[data-cat="command"] .key-char { color: var(--cat-command); }
-.key[data-cat="insert"]  .key-char { color: var(--cat-insert); }
-.key[data-cat="operator"] .key-char { color: var(--cat-operator); }
-.key[data-cat="extra"]   .key-char { color: var(--cat-extra); }
-.key[data-cat="count"]   .key-char { color: var(--cat-count); }
+/* Category colors — single custom property drives border + char color */
+.key[data-cat="motion"]  { --cat-color: var(--cat-motion); }
+.key[data-cat="command"] { --cat-color: var(--cat-command); }
+.key[data-cat="insert"]  { --cat-color: var(--cat-insert); }
+.key[data-cat="operator"]{ --cat-color: var(--cat-operator); }
+.key[data-cat="extra"]   { --cat-color: var(--cat-extra); }
+.key[data-cat="count"]   { --cat-color: var(--cat-count); }
 
 .key-char {
   font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 24px;
   font-weight: 600;
   line-height: 1;
+  color: var(--cat-color, var(--text));
 }
 .key-label {
   font-size: 12px;
@@ -328,7 +317,6 @@ header .subtitle {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* Dot indicator for keys needing a char argument */
 .key-dot {
   position: absolute;
   top: 3px; right: 5px;
@@ -495,7 +483,6 @@ header .subtitle {
 }
 .credit a { color: var(--text-dim); text-decoration: underline; }
 
-/* Level selector */
 .level-bar {
   display: flex;
   align-items: center;
@@ -533,7 +520,6 @@ header .subtitle {
   margin-left: 4px;
 }
 
-/* Theme selector */
 .theme-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-dim); }
 .theme-select {
   padding: 4px 8px;
@@ -549,7 +535,6 @@ header .subtitle {
 }
 .theme-select:focus { border-color: var(--cat-extra); }
 
-/* Light theme key shadow adjustments */
 html[data-theme="light"] .key {
   box-shadow: 0 1px 0 1px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.08);
   border-top: 1px solid var(--border);
@@ -617,13 +602,7 @@ html[data-theme="light"] .key:active {
 </div>
 
 <script>
-// =============================================================================
 // DATA
-// =============================================================================
-// Each key: { normal: { char, label, cat, tags, dot }, shifted: { ... }, notes: [] }
-// cat values: 'motion' | 'command' | 'insert' | 'operator' | 'extra' | 'count'
-// tags: used for filter buttons (matching the spreadsheet sheet tabs)
-// dot: true if the key expects a follow-up character argument
 
 var KEYS = {
   'Escape': {
@@ -933,10 +912,9 @@ var KEYS = {
   },
 };
 
-// Key widths in units (1u = standard key). Keys not listed are 1u.
 var KEY_WIDTHS = {
   'Tab': 1.5,
-  '\\': 1.5,     // leader key — extended to align with row edges
+  '\\': 1.5,
   'CapsLock': 1.75,
   'Backspace': 2,
   'Enter': 2.25,
@@ -948,10 +926,9 @@ var KEY_WIDTHS = {
   'RAlt': 1.25,
   'LMeta': 1.25,
   'RMeta': 1.25,
-  'Space': 0,    // 0 = flex fill
+  'Space': 0,
 };
 
-// Faded modifier/spacer keys (not primary Vim keys)
 var FADED_KEYS = {
   'Tab': 1, 'Backspace': 1, 'Enter': 1,
   'LShift': 1, 'RShift': 1, 'LCtrl': 1, 'RCtrl': 1,
@@ -1033,9 +1010,6 @@ var CAT_META = {
   count:    { label: 'Count',    color: 'var(--cat-count)',    desc: 'Number prefix \u2014 type before an action to repeat it' },
 };
 
-// Level definitions per filter category.
-// For each physical key, n = normal layer level, s = shifted layer level.
-// Keys with the tag but not listed here default to the max level.
 var LEVEL_DEFS = {
   moving: {
     max: 4,
@@ -1093,8 +1067,6 @@ var LEVEL_DEFS = {
   },
 };
 
-// Returns the level (group) a key belongs to for a given tag.
-// Returns 99 if not assigned to any group (only visible in Full).
 function getKeyLevel(keyId, isShifted, tag) {
   var def = LEVEL_DEFS[tag];
   if (!def) return 1;
@@ -1104,16 +1076,13 @@ function getKeyLevel(keyId, isShifted, tag) {
   return l !== undefined ? l : 99;
 }
 
-// Build reverse lookup: shifted char -> physical key
 var SHIFTED_TO_PHYS = {};
 Object.keys(KEYS).forEach(function(phys) {
   var data = KEYS[phys];
   if (data.shifted) { SHIFTED_TO_PHYS[data.shifted.char] = phys; }
 });
 
-// =============================================================================
 // STATE
-// =============================================================================
 var state = {
   shiftLocked: false,
   activeFilter: 'all',
@@ -1124,13 +1093,26 @@ var state = {
 var physicalShiftHeld = false;
 var physicalKeysHeld = {};
 
+var FADED_KEY_NAMES = {
+  'Shift': 1, 'Control': 1, 'Alt': 1, 'Meta': 1,
+  'CapsLock': 1, 'Tab': 1, 'Backspace': 1, 'Enter': 1, ' ': 1,
+};
+
+function getFadedKeyId(key, location) {
+  if (!FADED_KEY_NAMES[key]) return null;
+  if (key === 'Shift') return location === 2 ? 'RShift' : 'LShift';
+  if (key === 'Control') return location === 2 ? 'RCtrl' : 'LCtrl';
+  if (key === 'Alt') return location === 2 ? 'RAlt' : 'LAlt';
+  if (key === 'Meta') return location === 2 ? 'RMeta' : 'LMeta';
+  if (key === ' ') return 'Space';
+  return key;
+}
+
 function isShiftActive() {
   return state.shiftLocked || physicalShiftHeld;
 }
 
-// =============================================================================
-// DOM HELPERS — safe DOM construction (no innerHTML)
-// =============================================================================
+// DOM HELPERS
 function el(tag, attrs, children) {
   var node = document.createElement(tag);
   if (attrs) {
@@ -1163,9 +1145,7 @@ function clearEl(node) { while (node.firstChild) node.removeChild(node.firstChil
 var $ = function(sel) { return document.querySelector(sel); };
 var $$ = function(sel) { return document.querySelectorAll(sel); };
 
-// =============================================================================
 // RENDERING
-// =============================================================================
 function makeKeyEl(keyId, extraClass) {
   var w = KEY_WIDTHS[keyId];
   var cls = 'key';
@@ -1173,12 +1153,14 @@ function makeKeyEl(keyId, extraClass) {
   if (w !== undefined && w > 0) cls += ' key-wide';
   if (w === 0) cls += ' key-wide key-flex';
   if (FADED_KEYS[keyId]) cls += ' key-faded';
-  var keyEl = el('div', { className: cls }, [
-    el('span', { className: 'key-char' }),
-    el('span', { className: 'key-label' }),
-    el('span', { className: 'key-dot' }),
-  ]);
+  var charEl = el('span', { className: 'key-char' });
+  var labelEl = el('span', { className: 'key-label' });
+  var dotEl = el('span', { className: 'key-dot' });
+  var keyEl = el('div', { className: cls }, [charEl, labelEl, dotEl]);
   keyEl.setAttribute('data-key', keyId);
+  keyEl._charEl = charEl;
+  keyEl._labelEl = labelEl;
+  keyEl._dotEl = dotEl;
   if (w && w > 0) {
     keyEl.style.width = 'calc(' + w + ' * var(--key-size) + ' + (w - 1) + ' * var(--key-gap))';
   }
@@ -1191,20 +1173,16 @@ function renderKeyboard() {
   var kb = $('#keyboard');
   clearEl(kb);
 
-  // Esc row: Esc key + legend + toggles
   var escRow = el('div', { className: 'kb-row-esc' });
   escRow.appendChild(makeKeyEl('Escape', 'key-esc'));
 
   var controls = el('div', { className: 'kb-esc-controls' });
-  // Legend
   var legendWrap = el('div', { className: 'legend-items', id: 'legend' });
   controls.appendChild(legendWrap);
-  // Search box
   var searchBox = el('div', { className: 'kb-esc-search' });
   var searchInput = el('input', { type: 'text', id: 'search', placeholder: 'Search commands...', autocomplete: 'off' });
   searchBox.appendChild(searchInput);
   controls.appendChild(searchBox);
-  // Shift toggle
   var shiftToggle = el('div', { className: 'shift-toggle' }, [
     el('span', null, 'Shift'),
   ]);
@@ -1213,7 +1191,6 @@ function renderKeyboard() {
   ]);
   shiftToggle.appendChild(shiftTrack);
   controls.appendChild(shiftToggle);
-  // Theme toggle
   var themeToggle = el('div', { className: 'theme-toggle' }, [
     el('span', null, 'Theme'),
   ]);
@@ -1228,7 +1205,6 @@ function renderKeyboard() {
   escRow.appendChild(controls);
   kb.appendChild(escRow);
 
-  // Main key rows
   ROWS.forEach(function(row) {
     var rowEl = el('div', { className: 'kb-row' });
     row.keys.forEach(function(keyId) {
@@ -1278,7 +1254,6 @@ function renderLevelBar() {
       btns.appendChild(btn);
     })(i);
   }
-  // Full button
   var fullBtn = el('button', { className: 'level-btn' + (state.activeLevel === 99 ? ' active' : '') }, 'Full');
   fullBtn.addEventListener('click', function() {
     state.activeLevel = 99;
@@ -1340,11 +1315,12 @@ function renderCredit() {
   cont.appendChild(a2);
 }
 
+var _lastLesson = { filter: null, level: null, shift: null, selected: null };
+
 function updateDisplay() {
   var shift = isShiftActive();
   var query = state.searchQuery.toLowerCase();
 
-  // Update shift toggle visual
   var track = $('#shift-toggle');
   if (state.shiftLocked || physicalShiftHeld) {
     track.classList.add('active');
@@ -1357,13 +1333,11 @@ function updateDisplay() {
     var data = KEYS[keyId];
     var layer = shift ? data.shifted : data.normal;
 
-    // Update displayed content
-    keyEl.querySelector('.key-char').textContent = layer.char;
-    keyEl.querySelector('.key-label').textContent = layer.label;
-    keyEl.querySelector('.key-dot').textContent = layer.dot ? '\xb7' : '';
+    keyEl._charEl.textContent = layer.char;
+    keyEl._labelEl.textContent = layer.label;
+    keyEl._dotEl.textContent = layer.dot ? '\xb7' : '';
     keyEl.setAttribute('data-cat', layer.cat);
 
-    // Determine if key matches current filter + search + level
     var otherLayer = shift ? data.normal : data.shifted;
     var matchesFilter = state.activeFilter === 'all' ||
       (layer.tags.indexOf(state.activeFilter) >= 0 &&
@@ -1378,19 +1352,21 @@ function updateDisplay() {
     keyEl.classList.toggle('dimmed', !active);
     keyEl.classList.toggle('selected', state.selectedKey === keyId);
 
-    // Unfade faded keys when physically pressed
     if (FADED_KEYS[keyId]) {
       var isHeld = !!physicalKeysHeld[keyId];
       keyEl.classList.toggle('key-faded', !isHeld);
       keyEl.classList.toggle('key-pressed', isHeld);
     }
   });
-  renderLesson();
+  // Only rebuild lesson panel when relevant state changes
+  if (_lastLesson.filter !== state.activeFilter || _lastLesson.level !== state.activeLevel ||
+      _lastLesson.shift !== shift || _lastLesson.selected !== state.selectedKey) {
+    _lastLesson = { filter: state.activeFilter, level: state.activeLevel, shift: shift, selected: state.selectedKey };
+    renderLesson();
+  }
 }
 
-// =============================================================================
 // DETAIL PANEL
-// =============================================================================
 function showDetail(keyId) {
   if (state.selectedKey) return;
   renderDetail(keyId);
@@ -1398,8 +1374,8 @@ function showDetail(keyId) {
 
 function selectKey(keyId) {
   if (state.selectedKey === keyId) {
-    state.selectedKey = null;
-    renderDetailPlaceholder();
+    clearSelection();
+    return;
   } else {
     state.selectedKey = keyId;
     renderDetail(keyId);
@@ -1411,6 +1387,18 @@ function renderDetailPlaceholder() {
   var panel = $('#detail');
   clearEl(panel);
   panel.appendChild(el('div', { className: 'detail-placeholder' }, 'Hover or click any key to see details. Press keys on your keyboard to explore.'));
+}
+
+function clearSelection() {
+  state.selectedKey = null;
+  renderDetailPlaceholder();
+  updateDisplay();
+}
+
+function handleShiftChange(isHeld) {
+  physicalShiftHeld = isHeld;
+  updateDisplay();
+  if (state.selectedKey) renderDetail(state.selectedKey);
 }
 
 function renderLesson() {
@@ -1484,7 +1472,6 @@ function renderDetail(keyId) {
 
   clearEl(panel);
 
-  // Header
   var headerInfo = el('div', null, [
     el('div', { className: 'detail-title' }, primary.label),
     el('span', { className: 'detail-cat', style: { color: meta.color, borderColor: meta.color } }, meta.label),
@@ -1500,17 +1487,13 @@ function renderDetail(keyId) {
   ]);
   panel.appendChild(header);
 
-  // Body sections
   var body = el('div', { className: 'detail-body' });
-
-  // Category description
   var catSection = el('div', { className: 'detail-section' }, [
     el('h4', null, 'Category'),
     el('p', null, meta.desc),
   ]);
   body.appendChild(catSection);
 
-  // Other layer
   var otherSection = el('div', { className: 'detail-section' }, [
     el('h4', null, (shift ? 'Normal' : 'Shifted') + ' (' + secondary.char + ')'),
     el('p', { style: { color: secMeta.color } }, secondary.label),
@@ -1518,7 +1501,6 @@ function renderDetail(keyId) {
   ]);
   body.appendChild(otherSection);
 
-  // Ctrl key: show all Ctrl commands
   if (keyId === 'LCtrl' || keyId === 'RCtrl') {
     var ctrlSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Ctrl commands')]);
     var ul = el('ul');
@@ -1532,7 +1514,6 @@ function renderDetail(keyId) {
     body.appendChild(ctrlSection);
   }
 
-  // CapsLock: show remap tip
   if (keyId === 'CapsLock') {
     var capsSection = el('div', { className: 'detail-section' }, [
       el('h4', null, 'Tip'),
@@ -1541,7 +1522,6 @@ function renderDetail(keyId) {
     body.appendChild(capsSection);
   }
 
-  // Text objects (for operators)
   if (primary.cat === 'operator') {
     var toSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Works with text objects')]);
     var ul = el('ul');
@@ -1559,7 +1539,6 @@ function renderDetail(keyId) {
 
   panel.appendChild(body);
 
-  // Notes
   if (data.notes.length > 0) {
     data.notes.forEach(function(n) {
       var noteDiv = el('div', { className: 'note-ref' }, [
@@ -1571,9 +1550,7 @@ function renderDetail(keyId) {
   }
 }
 
-// =============================================================================
 // EVENT HANDLERS
-// =============================================================================
 function initEvents() {
   var searchInput = $('#search');
 
@@ -1584,11 +1561,9 @@ function initEvents() {
 
   $('#shift-toggle').addEventListener('click', function() {
     state.shiftLocked = !state.shiftLocked;
-    updateDisplay();
-    if (state.selectedKey) renderDetail(state.selectedKey);
+    handleShiftChange(physicalShiftHeld);
   });
 
-  // Theme selector
   var themeSelect = $('#theme-select');
   var savedTheme = localStorage.getItem('vim-cheat-theme');
   if (savedTheme) {
@@ -1601,7 +1576,6 @@ function initEvents() {
     localStorage.setItem('vim-cheat-theme', theme);
   });
 
-  // Helper: switch to a filter by index
   function setFilterByIndex(idx) {
     if (idx < 0) idx = FILTERS.length - 1;
     if (idx >= FILTERS.length) idx = 0;
@@ -1616,8 +1590,6 @@ function initEvents() {
     updateDisplay();
   }
 
-  // Helper: change level within current filter
-  // Levels cycle: 1, 2, ..., max, 99 (Full)
   function adjustLevel(delta) {
     var def = LEVEL_DEFS[state.activeFilter];
     if (!def || def.max <= 1) return;
@@ -1635,7 +1607,6 @@ function initEvents() {
   }
 
   document.addEventListener('keydown', function(e) {
-    // Arrow keys work even when search is focused
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       var curIdx = FILTERS.findIndex(function(f) { return f.id === state.activeFilter; });
       setFilterByIndex(curIdx + (e.key === 'ArrowRight' ? 1 : -1));
@@ -1650,39 +1621,24 @@ function initEvents() {
 
     if (document.activeElement === searchInput) return;
 
-    // Track physical modifier/faded key presses for visual feedback
-    var fadedKeyMap = {
-      'Shift': e.location === 2 ? 'RShift' : 'LShift',
-      'Control': e.location === 2 ? 'RCtrl' : 'LCtrl',
-      'Alt': e.location === 2 ? 'RAlt' : 'LAlt',
-      'Meta': e.location === 2 ? 'RMeta' : 'LMeta',
-      'CapsLock': 'CapsLock', 'Tab': 'Tab',
-      'Backspace': 'Backspace', 'Enter': 'Enter', ' ': 'Space',
-    };
-    if (fadedKeyMap[e.key]) {
-      physicalKeysHeld[fadedKeyMap[e.key]] = true;
-    }
+    var fadedId = getFadedKeyId(e.key, e.location);
+    if (fadedId) physicalKeysHeld[fadedId] = true;
 
     if (e.key === 'Shift') {
-      physicalShiftHeld = true;
-      updateDisplay();
-      if (state.selectedKey) renderDetail(state.selectedKey);
+      handleShiftChange(true);
       return;
     }
     if (e.key === 'Escape') {
       if (state.selectedKey || state.searchQuery) {
-        state.selectedKey = null;
         state.searchQuery = '';
         searchInput.value = '';
-        renderDetailPlaceholder();
-        updateDisplay();
+        clearSelection();
       } else {
         selectKey('Escape');
       }
       return;
     }
 
-    // Map special physical keys to our key IDs
     var specialMap = {
       'Tab': 'Tab', 'Backspace': 'Backspace', 'Enter': 'Enter',
       ' ': 'Space', 'Control': 'LCtrl', 'CapsLock': 'CapsLock',
@@ -1709,39 +1665,23 @@ function initEvents() {
   });
 
   document.addEventListener('keyup', function(e) {
-    // Clear physical held state for faded keys
-    var fadedKeyMap = {
-      'Shift': e.location === 2 ? 'RShift' : 'LShift',
-      'Control': e.location === 2 ? 'RCtrl' : 'LCtrl',
-      'Alt': e.location === 2 ? 'RAlt' : 'LAlt',
-      'Meta': e.location === 2 ? 'RMeta' : 'LMeta',
-      'CapsLock': 'CapsLock', 'Tab': 'Tab',
-      'Backspace': 'Backspace', 'Enter': 'Enter', ' ': 'Space',
-    };
-    if (fadedKeyMap[e.key]) {
-      delete physicalKeysHeld[fadedKeyMap[e.key]];
+    var fadedId = getFadedKeyId(e.key, e.location);
+    if (fadedId) {
+      delete physicalKeysHeld[fadedId];
       updateDisplay();
     }
 
-    if (e.key === 'Shift') {
-      physicalShiftHeld = false;
-      updateDisplay();
-      if (state.selectedKey) renderDetail(state.selectedKey);
-    }
+    if (e.key === 'Shift') handleShiftChange(false);
   });
 
   document.addEventListener('click', function(e) {
     if (!e.target.closest('.key') && !e.target.closest('.detail-panel') && !e.target.closest('.lesson-panel')) {
-      state.selectedKey = null;
-      renderDetailPlaceholder();
-      updateDisplay();
+      clearSelection();
     }
   });
 }
 
-// =============================================================================
 // INIT
-// =============================================================================
 function init() {
   renderKeyboard();
   renderFilters();
