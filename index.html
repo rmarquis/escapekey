@@ -719,7 +719,7 @@ var KEYS = {
   },
   '7': {
     normal:  { char: '7', label: 'count',         cat: 'count',   tags: [] },
-    shifted: { char: '&', label: 'repeat :s',     cat: 'command', tags: ['actions', 'search'] },
+    shifted: { char: '&', label: 'repeat subst.', cat: 'command', tags: ['actions', 'search'] },
     notes: [2, 12],
   },
   '8': {
@@ -1041,7 +1041,7 @@ var NOTES = {
   9: 'Visual mode is intuitive but does not always play well with the dot command. Prefer Normal mode operators when you want repeatability.',
   10: 'g; jumps to the position of the last change; g, jumps forward in the change list. Navigate your edit history like a timeline.',
   11: 'Ctrl-O jumps back to the previous position in the jump list; Ctrl-I jumps forward. Navigate across files effortlessly.',
-  12: ':%s/old/new/g replaces all occurrences. Add c to confirm each (gc), i to ignore case (gi). Leave search field blank to reuse last pattern.',
+  12: ':%s/old/new/g replaces all occurrences. Add c to confirm each (gc), i to ignore case (gi). Leave search field blank to reuse last pattern. & repeats the last :substitute on the current line; g& repeats it on all lines.',
   13: ':g/pattern/cmd runs an Ex command on every line matching a pattern. :v/pattern/cmd runs on lines that do NOT match.',
   14: 'Ctrl-R= in Insert mode evaluates the expression register. Use it for calculations, incrementing counters, or inserting dynamic content.',
   15: 'When recording macros: normalize cursor position (0, ^, $), strike with precision, and abort early if something goes wrong.',
