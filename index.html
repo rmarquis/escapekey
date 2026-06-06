@@ -1537,7 +1537,7 @@ function renderKeyboard() {
   var legendWrap = el('div', { className: 'legend-items', id: 'legend' });
   controls.appendChild(legendWrap);
   var searchBox = el('div', { className: 'kb-esc-search' });
-  var searchInput = el('input', { type: 'text', id: 'search', placeholder: 'Search commands...', autocomplete: 'off' });
+  var searchInput = el('input', { type: 'text', id: 'search', placeholder: 'Search commands...', autocomplete: 'off', 'aria-label': 'Search commands' });
   searchBox.appendChild(searchInput);
   controls.appendChild(searchBox);
   var shiftToggle = el('div', { className: 'shift-toggle' }, [
