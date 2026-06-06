@@ -1015,12 +1015,12 @@ var ROWS = [
 var FILTERS = [
   { id: 'all',       label: 'All' },
   { id: 'moving',    label: 'Moving' },
+  { id: 'modes',     label: 'Modes' },
   { id: 'actions',   label: 'Actions' },
+  { id: 'operators', label: 'Operators' },
   { id: 'delete',    label: 'Delete' },
   { id: 'copy-paste',label: 'Copy / Paste' },
   { id: 'search',    label: 'Search' },
-  { id: 'operators', label: 'Operators' },
-  { id: 'modes',     label: 'Modes' },
   { id: 'marks',     label: 'Marks' },
   { id: 'macros',    label: 'Macros' },
 ];
@@ -1212,6 +1212,21 @@ var LEVEL_DEFS = {
       '\\': { s: 5 },
     }
   },
+  modes: {
+    max: 4,
+    labels: ['Essential', 'Insert Variants', 'Visual & Replace', 'Ex Mode'],
+    keys: {
+      'Escape': { n: [1,2,3,4], s: [1,2,3,4] },
+      'i': { n: [1,2,3,4], s: [1,2,3,4] },
+      'v': { n: [1,2,3,4], s: [1,2,3,4] },
+      ';': { s: [1,2,3,4] },
+      'a': { n: 2, s: 2 },
+      'o': { n: 2, s: 2 },
+      's': { n: 2, s: 2 },
+      'r': { s: 3 },
+      'q': { s: 4 },
+    }
+  },
   actions: {
     max: 4,
     labels: ['Basic Edits', 'Join & Case', 'Replace Mode', 'Repeat & Complex'],
@@ -1225,6 +1240,19 @@ var LEVEL_DEFS = {
       's': { n: [2,3,4], s: [2,3,4] },
       'c': { n: [2,3,4], s: [2,3,4] },
       '7': { s: 4 },
+    }
+  },
+  operators: {
+    max: 4,
+    labels: ['Basic Ops', 'Format & Case', 'Indent', 'Advanced'],
+    keys: {
+      'd': { n: [1,2,3,4], s: [1,2,3,4] },
+      'c': { n: [1,2,3,4], s: [1,2,3,4] },
+      'y': { n: [1,2,3,4], s: [1,2,3,4] },
+      '`': { s: 2 },
+      '=': { n: 2 },
+      '.': { s: 3 },
+      ',': { s: 3 },
     }
   },
   'delete': {
@@ -1256,34 +1284,6 @@ var LEVEL_DEFS = {
       '7': { s: 3 },
     }
   },
-  operators: {
-    max: 4,
-    labels: ['Basic Ops', 'Format & Case', 'Indent', 'Advanced'],
-    keys: {
-      'd': { n: [1,2,3,4], s: [1,2,3,4] },
-      'c': { n: [1,2,3,4], s: [1,2,3,4] },
-      'y': { n: [1,2,3,4], s: [1,2,3,4] },
-      '`': { s: 2 },
-      '=': { n: 2 },
-      '.': { s: 3 },
-      ',': { s: 3 },
-    }
-  },
-  modes: {
-    max: 4,
-    labels: ['Essential', 'Insert Variants', 'Visual & Replace', 'Ex Mode'],
-    keys: {
-      'Escape': { n: [1,2,3,4], s: [1,2,3,4] },
-      'i': { n: [1,2,3,4], s: [1,2,3,4] },
-      'v': { n: [1,2,3,4], s: [1,2,3,4] },
-      ';': { s: [1,2,3,4] },
-      'a': { n: 2, s: 2 },
-      'o': { n: 2, s: 2 },
-      's': { n: 2, s: 2 },
-      'r': { s: 3 },
-      'q': { s: 4 },
-    }
-  },
   marks: {
     max: 3,
     labels: ['Set & Jump', 'Global Marks', 'Special Marks'],
@@ -1312,11 +1312,23 @@ var LESSONS = {
     5: { title: 'Search & Coordinate Jumps', desc: 'Use search as a motion and jump to precise coordinates in the file.', tips: ['Tip 51: / and ? search; n/N repeat in the same/opposite direction.', '* searches for the word under cursor forward; # searches backward.', 'gg goes to the top of the file; G goes to the bottom (or to a specific line with a count).', '| goes to a specific column on the current line.'], exercise: 'Search for a common word with *. Use n/N to cycle matches. Jump to line 10 with 10G, then to column 20 with 20|.' },
     6: { title: 'Paragraphs & Blocks', desc: 'Move by paragraphs, sentences, matching delimiters, and jump lists.', tips: ['{ and } move by paragraph.', '( and ) move by sentence.', '% jumps to the matching bracket/paren/brace.', 'Ctrl-O and Ctrl-I jump back/forward through the jump list.'], exercise: 'Navigate a document with paragraphs using { and }. Use ( and ) to move by sentences. Try % to jump between matching braces.' },
   },
+  modes: {
+    1: { title: 'Essential Modes', desc: 'Switching between Normal, Insert, Visual, and Command-line modes.', tips: ['i enters Insert mode at cursor; Esc returns to Normal.', 'v enters Visual (character) mode.', ': enters Ex command-line mode.'], exercise: 'Enter Insert mode, type a few words, then press Esc. Enter Visual mode, select some text, then press Esc. Feel the rhythm.' },
+    2: { title: 'Insert Variants', desc: 'Enter Insert mode at strategic positions.', tips: ['I inserts at the beginning of the line; A appends at the end.', 'o opens a new line below; O opens above.', 'a appends after the cursor (one step right of i).', 's substitutes the character under cursor; S substitutes the whole line.'], exercise: 'On a line of code, use I to add indentation at the start, A to add a semicolon at the end, and o to open a new line for the next statement.' },
+    3: { title: 'Visual & Replace', desc: 'Visual Line, Visual Block, and Replace mode.', tips: ['V enters Visual Line mode (select whole lines).', 'Ctrl-V enters Visual Block mode (select rectangular regions).', 'R enters Replace mode for continuous overwriting.', 'gv reselects the last visual selection.'], exercise: 'Enter Visual Block mode with Ctrl-V, select a column of text, and type I to insert before every line.' },
+    4: { title: 'Ex Mode', desc: 'Q enters Ex mode for batch command execution.', tips: ['Q enters Ex mode (like a command-line only interface).', 'Useful for running multiple Ex commands in sequence.', 'gQ enters improved Ex mode with better editing.'], exercise: 'Enter Ex mode with Q, run a few : commands, then type visual to return to Normal mode.' },
+  },
   actions: {
     1: { title: 'Basic Edits', desc: 'The essential commands for making small changes and undoing them.', tips: ['Tip 9: x deletes a single character; u undoes the last change; . repeats it.', 'r replaces a single character without entering insert mode.', 'X deletes the character before the cursor (like backspace in Normal mode).'], exercise: 'Type a sentence with mistakes. Use x and X to delete errors, r to fix single characters, and u to undo.' },
     2: { title: 'Join & Case', desc: 'Combine lines and toggle case efficiently.', tips: ['J joins the current line with the one below.', '~ toggles the case of the character under the cursor.'], exercise: 'Join two short lines with J. Toggle the case of a word with ~. Notice how ~ acts on the character under the cursor.' },
     3: { title: 'Replace Mode', desc: 'Overwrite existing text continuously.', tips: ['Tip 19: R enters Replace mode \u2014 like Insert but overwrites.', 'Use Replace mode when you want to overwrite a fixed-width block of text.'], exercise: 'Enter Replace mode with R and overwrite an entire word. Compare how it feels versus deleting and retyping.' },
     4: { title: 'Repeat & Complex', desc: 'Master the dot command and compound edits.', tips: ['Tip 1: The dot command is the most powerful command in Vim \u2014 it repeats the last change.', 'Tip 6: The Dot Formula: one keystroke to move, one to change, and . to repeat.', 's deletes the character under the cursor and enters insert mode (substitute char).', 'S deletes the entire line and enters insert mode (substitute line).'], exercise: 'Add a semicolon to the end of 5 lines using A;<Esc>, then use j. to repeat on the remaining lines.' },
+  },
+  operators: {
+    1: { title: 'Basic Operators', desc: 'The three core operators: delete, change, yank.', tips: ['Tip 12: d = delete, c = change (delete + insert), y = yank.', 'All three require a motion afterward to define the range.', 'Doubling them acts on the line: dd, cc, yy.'], exercise: 'On a single line, use dw to delete a word, cw to change a word, and yw to yank a word. Observe how each behaves.' },
+    2: { title: 'Format & Case', desc: 'Auto-indent and change case.', tips: ['= auto-formats/indents code (e.g., =ap to format a paragraph, gg=G for the whole file).', '~ toggles case; gU makes uppercase; gu makes lowercase.', 'gU{motion} is a normal-mode operator \u2014 gUiw uppercases the inner word.'], exercise: 'Select a block of code and press = to auto-indent it. Use ~, gU, and gu to experiment with case changes.' },
+    3: { title: 'Indent', desc: 'Shift text left or right.', tips: ['> indents right; < unindents left.', '>> indents the current line; << unindents.', 'In Visual mode, > and < indent the selection.'], exercise: 'Select several lines in Visual mode and use > to indent them. Use < to unindent.' },
+    4: { title: 'Advanced Operators', desc: 'Combine operators with text objects for surgical precision.', tips: ['Operators + text objects = Vim superpower.', 'ci" changes inside quotes (delete contents + insert).', 'ya{ yanks around braces (includes the braces).', 'Any operator works with any text object or motion!'], exercise: 'Take a function with quoted strings and braces. Use ci" to change a string, ya{ to yank the whole function block.' },
   },
   'delete': {
     1: { title: 'Char & Line Deletion', desc: 'Remove individual characters and whole lines.', tips: ['x and X delete single characters.', 'dd deletes the current line (duplicate the operator to act on the line).', 'D deletes from cursor to end of line.'], exercise: 'Delete 3 consecutive lines with dd. Use x to clean up stray characters, and D to truncate a line from the cursor.' },
@@ -1335,18 +1347,6 @@ var LESSONS = {
     2: { title: 'Word Search', desc: 'Search for the word under the cursor instantly.', tips: ['* searches forward for the word under cursor; # searches backward.', 'These are motions \u2014 you can operate on them: c* changes the next occurrence of the word.'], exercise: 'Place the cursor on a variable name and press * to find all occurrences. Use n/N to navigate, then c* to change the next one.' },
     3: { title: 'Substitute', desc: 'Find and replace with :s and repeat with &.', tips: ['& repeats the last :substitute on the current line.', 'g& repeats the last substitution on all lines.'], exercise: 'Run a substitution with :%s/old/new/g. Press & to repeat it on another line.' },
     4: { title: 'Advanced Search', desc: 'Operate on matches and refine patterns.', tips: ['Tip 84: gn selects the next search match as a motion \u2014 dgn deletes the next match.', 'Tip 82: :set incsearch shows matches as you type.', 'Tip 91: Leave the search field of :s blank to reuse the last search pattern.'], exercise: 'Search for a word, then use cgn to change the next match. Press . to repeat on subsequent matches.' },
-  },
-  operators: {
-    1: { title: 'Basic Operators', desc: 'The three core operators: delete, change, yank.', tips: ['Tip 12: d = delete, c = change (delete + insert), y = yank.', 'All three require a motion afterward to define the range.', 'Doubling them acts on the line: dd, cc, yy.'], exercise: 'On a single line, use dw to delete a word, cw to change a word, and yw to yank a word. Observe how each behaves.' },
-    2: { title: 'Format & Case', desc: 'Auto-indent and change case.', tips: ['= auto-formats/indents code (e.g., =ap to format a paragraph, gg=G for the whole file).', '~ toggles case; gU makes uppercase; gu makes lowercase.', 'gU{motion} is a normal-mode operator \u2014 gUiw uppercases the inner word.'], exercise: 'Select a block of code and press = to auto-indent it. Use ~, gU, and gu to experiment with case changes.' },
-    3: { title: 'Indent', desc: 'Shift text left or right.', tips: ['> indents right; < unindents left.', '>> indents the current line; << unindents.', 'In Visual mode, > and < indent the selection.'], exercise: 'Select several lines in Visual mode and use > to indent them. Use < to unindent.' },
-    4: { title: 'Advanced Operators', desc: 'Combine operators with text objects for surgical precision.', tips: ['Operators + text objects = Vim superpower.', 'ci" changes inside quotes (delete contents + insert).', 'ya{ yanks around braces (includes the braces).', 'Any operator works with any text object or motion!'], exercise: 'Take a function with quoted strings and braces. Use ci" to change a string, ya{ to yank the whole function block.' },
-  },
-  modes: {
-    1: { title: 'Essential Modes', desc: 'Switching between Normal, Insert, Visual, and Command-line modes.', tips: ['i enters Insert mode at cursor; Esc returns to Normal.', 'v enters Visual (character) mode.', ': enters Ex command-line mode.'], exercise: 'Enter Insert mode, type a few words, then press Esc. Enter Visual mode, select some text, then press Esc. Feel the rhythm.' },
-    2: { title: 'Insert Variants', desc: 'Enter Insert mode at strategic positions.', tips: ['I inserts at the beginning of the line; A appends at the end.', 'o opens a new line below; O opens above.', 'a appends after the cursor (one step right of i).', 's substitutes the character under cursor; S substitutes the whole line.'], exercise: 'On a line of code, use I to add indentation at the start, A to add a semicolon at the end, and o to open a new line for the next statement.' },
-    3: { title: 'Visual & Replace', desc: 'Visual Line, Visual Block, and Replace mode.', tips: ['V enters Visual Line mode (select whole lines).', 'Ctrl-V enters Visual Block mode (select rectangular regions).', 'R enters Replace mode for continuous overwriting.', 'gv reselects the last visual selection.'], exercise: 'Enter Visual Block mode with Ctrl-V, select a column of text, and type I to insert before every line.' },
-    4: { title: 'Ex Mode', desc: 'Q enters Ex mode for batch command execution.', tips: ['Q enters Ex mode (like a command-line only interface).', 'Useful for running multiple Ex commands in sequence.', 'gQ enters improved Ex mode with better editing.'], exercise: 'Enter Ex mode with Q, run a few : commands, then type visual to return to Normal mode.' },
   },
   marks: {
     1: { title: 'Set & Jump', desc: 'Bookmarks within a file.', tips: ['Tip 54: m{letter} sets a mark (a-z for local).', '\'{letter} jumps to the line of the mark.', '`{letter} jumps to the exact position.', 'mm is a common choice for a temporary mark.'], exercise: 'Set a mark with mm, scroll away, then jump back with `m. Set another mark and practice switching between them.' },
