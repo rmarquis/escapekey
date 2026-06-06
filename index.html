@@ -1870,8 +1870,10 @@ function renderKeyboard() {
     el('span', null, 'Theme'),
   ]);
   var themeSelect = el('select', { className: 'theme-select', id: 'theme-select' });
+  var optSystem = el('option', { value: 'system' }, 'System');
   var optDark = el('option', { value: 'dark' }, 'Dark');
   var optLight = el('option', { value: 'light' }, 'Light');
+  themeSelect.appendChild(optSystem);
   themeSelect.appendChild(optDark);
   themeSelect.appendChild(optLight);
   themeToggle.appendChild(themeSelect);
@@ -2423,15 +2425,29 @@ function initEvents() {
     handleShiftChange(physicalShiftHeld);
   });
 
-  var themeSelect = $('#theme-select');
-  var savedTheme = localStorage.getItem('vim-cheat-theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    themeSelect.value = savedTheme;
+  function applyTheme(theme) {
+    var effective = theme;
+    if (theme === 'system' || !theme) {
+      effective = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', effective);
   }
+
+  var themeSelect = $('#theme-select');
+  var savedTheme = localStorage.getItem('vim-cheat-theme') || 'system';
+  themeSelect.value = savedTheme;
+  applyTheme(savedTheme);
+
+  var mq = window.matchMedia('(prefers-color-scheme: light)');
+  if (mq.addEventListener) {
+    mq.addEventListener('change', function() {
+      if (themeSelect.value === 'system') applyTheme('system');
+    });
+  }
+
   themeSelect.addEventListener('change', function(e) {
     var theme = e.target.value;
-    document.documentElement.setAttribute('data-theme', theme);
+    applyTheme(theme);
     localStorage.setItem('vim-cheat-theme', theme);
   });
 
