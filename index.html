@@ -1163,6 +1163,15 @@ var BRACKET_COMMANDS = [
   { cmd: ']c', desc: 'Next diff change' },
 ];
 
+var OPERATOR_COMBOS = {
+  'd': ['dw', 'db', 'de', 'd$', 'dd', 'dap', 'dt.', 'df.'],
+  'c': ['cw', 'ci"', 'caw', 'c$', 'cc', 'ct.', 'cf.'],
+  'y': ['yw', 'yi"', 'yaw', 'y$', 'yy', 'yap'],
+  '.': ['>>', '>ap', '>G'],
+  ',': ['<<', '<ap', '<G'],
+  '=': ['=ap', '==', 'gg=G'],
+};
+
 var COMBOS = [
   { cmd: 'dw / d$ / dd', desc: 'Delete word / to EOL / line' },
   { cmd: 'cw / ci" / caw', desc: 'Change word / inside quotes / around word' },
@@ -2029,6 +2038,18 @@ function renderDetail(keyId) {
   }
 
   if (primary.cat === 'operator') {
+    var combos = OPERATOR_COMBOS[keyId];
+    if (combos) {
+      var comboSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Common combinations')]);
+      var comboUl = el('ul');
+      combos.forEach(function(c) {
+        comboUl.appendChild(el('li', null, [
+          el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-operator)' } }, c),
+        ]));
+      });
+      comboSection.appendChild(comboUl);
+      body.appendChild(comboSection);
+    }
     var toSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Works with text objects')]);
     var ul = el('ul');
     TEXT_OBJECTS.forEach(function(to) {
