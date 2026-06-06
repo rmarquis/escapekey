@@ -2035,14 +2035,12 @@ function renderLesson() {
     panel.appendChild(el('p', { className: 'lesson-desc' }, 'This is a progressive Vim tutorial. Pick a category above and work through the levels from 1 upward. Each level introduces new keys with tips and hands-on exercises. New to Vim? Run vimtutor in your terminal for a guided 30-minute introduction.'));
     panel.appendChild(el('div', { className: 'lesson-section-title' }, 'Suggested Path'));
     var path = el('ul', { className: 'lesson-tips' });
-    ['Start with Moving to learn navigation without arrow keys.',
-     'Next, Modes shows how to enter and exit Insert mode.',
-     'Then Actions covers basic edits, undo, and the dot command.',
-     'Operators teaches delete, change, and yank combined with motions.',
-     'Delete and Copy/Paste dive deeper into specific workflows.',
-     'Finally, Search, Marks, and Macros unlock advanced efficiency.'].forEach(function(s) {
-      path.appendChild(el('li', null, s));
-    });
+    path.appendChild(el('li', null, ['Start with ', el('strong', null, 'Moving'), ' to learn navigation without arrow keys.']));
+    path.appendChild(el('li', null, ['Next, ', el('strong', null, 'Modes'), ' shows how to enter and exit Insert mode.']));
+    path.appendChild(el('li', null, ['Then, ', el('strong', null, 'Actions'), ' covers basic edits, undo, and the dot command.']));
+    path.appendChild(el('li', null, [el('strong', null, 'Operators'), ' teaches delete, change, and yank combined with motions.']));
+    path.appendChild(el('li', null, [el('strong', null, 'Delete'), ' and ', el('strong', null, 'Copy/Paste'), ' dive deeper into specific workflows.']));
+    path.appendChild(el('li', null, ['Finally, ', el('strong', null, 'Search'), ', ', el('strong', null, 'Marks'), ', and ', el('strong', null, 'Macros'), ' unlock advanced efficiency.']));
     panel.appendChild(path);
     return;
   }
