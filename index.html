@@ -1259,6 +1259,25 @@ var LESSONS = {
   },
 };
 
+var TIP_REFS = {
+  'Escape': [14],
+  'i': [13, 14, 15], 'a': [2], 'A': [2, 6], 'o': [2], 'O': [2],
+  'h': [47], 'j': [47, 48], 'k': [47, 48], 'l': [47],
+  'w': [49], 'b': [49], 'e': [49],
+  'f': [50], 't': [50], ';': [50], ',': [50],
+  'm': [54], "'": [54], '`': [54],
+  '/': [80, 82, 83], 'n': [80, 84], '3': [80], '8': [80],
+  'x': [9], 'u': [8], 'r': [19], '.': [1, 6],
+  'd': [9, 12], 'c': [12], 'y': [12, 60],
+  'p': [60, 63], 'P': [63],
+  'v': [20, 21, 23], 'V': [21],
+  'q': [65, 69, 70], '2': [65, 67],
+  'g': [52, 53, 58, 71],
+  '7': [88, 93],
+  's': [3, 19], 'S': [19],
+  'z': [5],
+};
+
 function getKeyLevel(keyId, isShifted, tag, targetLevel) {
   if (targetLevel === undefined) targetLevel = state.activeLevel;
   var def = LEVEL_DEFS[tag];
@@ -1770,6 +1789,15 @@ function renderDetail(keyId) {
   }
 
   panel.appendChild(body);
+
+  var tipNums = TIP_REFS[keyId];
+  if (tipNums && tipNums.length > 0) {
+    var tipDiv = el('div', { className: 'note-ref' }, [
+      el('strong', null, 'Practical Vim: '),
+      document.createTextNode('Tips ' + tipNums.join(', ')),
+    ]);
+    panel.appendChild(tipDiv);
+  }
 
   if (data.notes.length > 0) {
     data.notes.forEach(function(n) {
