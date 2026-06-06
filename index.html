@@ -1193,7 +1193,7 @@ var CAT_META = {
 var LEVEL_DEFS = {
   moving: {
     max: 6,
-    labels: ['Home Row', 'Word-Wise', 'Find Char', 'Screen & Marks', 'Search & Jumps', 'Paragraphs & Blocks'],
+    labels: ['Home Row', 'Word-Wise', 'Find Char', 'Screen & Marks', 'Search & Coordinate Jumps', 'Paragraphs & Blocks'],
     keys: {
       'h': { n: 1, s: 4 }, 'j': { n: 1 }, 'k': { n: 1 }, 'l': { n: 1, s: 4 },
       '0': { n: 1, s: 6 }, '4': { s: 1 }, '6': { s: 1 },
@@ -1209,7 +1209,7 @@ var LEVEL_DEFS = {
       '9': { s: 6 },
       '[': { s: 6 }, ']': { s: 6 },
       '5': { s: 6 },
-      '\\': { s: 6 },
+      '\\': { s: 5 },
     }
   },
   actions: {
@@ -1309,8 +1309,8 @@ var LESSONS = {
     2: { title: 'Word-Wise Motion', desc: 'Move by words instead of characters. This is the first step to faster navigation.', tips: ['Tip 49: w/b/e traverse words; W/B/E traverse WORDS (whitespace only).', 'Use the one that gets you closest with the fewest keystrokes.'], exercise: 'In a paragraph of text, jump from the first word to the last using only w, b, and e. Try both word and WORD variants.' },
     3: { title: 'Find Character', desc: 'Jump to specific characters on the current line. Extremely powerful for inline navigation.', tips: ['Tip 50: f{char} finds forward; F{char} finds backward; t/T stop before the char.', '; repeats the last f/t in the same direction; , reverses it.', 'These work beautifully with operators: dt. deletes up to (but not including) the next period.'], exercise: 'On a line with punctuation, practice f, F, t, and T to jump to commas and periods. Use ; and , to repeat and reverse.' },
     4: { title: 'Screen & Marks', desc: 'Navigate by screen position and set bookmarks for snap-back navigation.', tips: ['Tip 54: m{letter} sets a mark; \'{letter} jumps to the line; `{letter} jumps to the exact position.', 'H/M/L jump to the top/middle/bottom of the screen.'], exercise: 'Open a long file. Practice H, M, and L to jump to different screen positions. Set marks with m and jump back with `.' },
-    5: { title: 'Search & File Jumps', desc: 'Use search as a motion and jump across the entire file.', tips: ['Tip 51: / and ? search; n/N repeat in the same/opposite direction.', '* searches for the word under cursor forward; # searches backward.', 'gg goes to the top of the file; G goes to the bottom.'], exercise: 'Search for a common word with *. Use n/N to cycle matches. Jump to the top with gg and bottom with G.' },
-    6: { title: 'Paragraphs & Advanced', desc: 'Move by paragraphs, sentences, matching delimiters, and jump lists.', tips: ['{ and } move by paragraph.', '( and ) move by sentence.', '% jumps to the matching bracket/paren/brace.', '| goes to a specific column.', 'Ctrl-O and Ctrl-I jump back/forward through the jump list.'], exercise: 'Navigate a document with paragraphs using { and }. Use ( and ) to move by sentences. Try % to jump between matching braces.' },
+    5: { title: 'Search & Coordinate Jumps', desc: 'Use search as a motion and jump to precise coordinates in the file.', tips: ['Tip 51: / and ? search; n/N repeat in the same/opposite direction.', '* searches for the word under cursor forward; # searches backward.', 'gg goes to the top of the file; G goes to the bottom (or to a specific line with a count).', '| goes to a specific column on the current line.'], exercise: 'Search for a common word with *. Use n/N to cycle matches. Jump to line 10 with 10G, then to column 20 with 20|.' },
+    6: { title: 'Paragraphs & Blocks', desc: 'Move by paragraphs, sentences, matching delimiters, and jump lists.', tips: ['{ and } move by paragraph.', '( and ) move by sentence.', '% jumps to the matching bracket/paren/brace.', 'Ctrl-O and Ctrl-I jump back/forward through the jump list.'], exercise: 'Navigate a document with paragraphs using { and }. Use ( and ) to move by sentences. Try % to jump between matching braces.' },
   },
   actions: {
     1: { title: 'Basic Edits', desc: 'The essential commands for making small changes and undoing them.', tips: ['Tip 9: x deletes a single character; u undoes the last change; . repeats it.', 'r replaces a single character without entering insert mode.', 'X deletes the character before the cursor (like backspace in Normal mode).'], exercise: 'Type a sentence with mistakes. Use x and X to delete errors, r to fix single characters, and u to undo.' },
