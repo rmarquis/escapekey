@@ -661,10 +661,6 @@ html[data-theme="light"] .key:active {
       <div class="ref-list" id="text-objects"></div>
     </div>
     <div class="ref-card">
-      <h3>Useful Settings</h3>
-      <div class="ref-list" id="settings"></div>
-    </div>
-    <div class="ref-card">
       <h3>Common Combos</h3>
       <div class="ref-list" id="combos"></div>
     </div>
@@ -1185,23 +1181,6 @@ var COMBOS = [
   { cmd: 'vU / vu', desc: 'Uppercase / lowercase selection' },
 ];
 
-var SETTINGS = [
-  { cmd: 'set number', desc: 'Show line numbers' },
-  { cmd: 'set relativenumber', desc: 'Relative line numbers' },
-  { cmd: 'set hlsearch', desc: 'Highlight search matches' },
-  { cmd: 'set incsearch', desc: 'Show matches while typing' },
-  { cmd: 'set ignorecase', desc: 'Case-insensitive search' },
-  { cmd: 'set smartcase', desc: 'Case-sensitive if uppercase used' },
-  { cmd: 'set hidden', desc: 'Allow hidden modified buffers' },
-  { cmd: 'set clipboard=unnamedplus', desc: 'Use system clipboard' },
-  { cmd: 'set mouse=a', desc: 'Enable mouse in all modes' },
-  { cmd: 'set expandtab', desc: 'Use spaces instead of tabs' },
-  { cmd: 'set shiftwidth=2', desc: 'Indent width' },
-  { cmd: 'set scrolloff=8', desc: 'Keep 8 lines above/below cursor' },
-  { cmd: 'set undofile', desc: 'Persistent undo across sessions' },
-  { cmd: 'set termguicolors', desc: 'True color support' },
-];
-
 var CAT_META = {
   motion:   { label: 'Motion',   color: 'var(--cat-motion)',   desc: 'Moves the cursor or defines range for an operator' },
   command:  { label: 'Command',  color: 'var(--cat-command)',  desc: 'Direct action command' },
@@ -1665,17 +1644,6 @@ function renderTextObjects() {
     var row = el('div', { className: 'ref-row' }, [
       el('span', { className: 'ref-cmd' }, to.keys),
       el('span', { className: 'ref-desc' }, to.label),
-    ]);
-    cont.appendChild(row);
-  });
-}
-
-function renderSettings() {
-  var cont = document.getElementById('settings');
-  SETTINGS.forEach(function(s) {
-    var row = el('div', { className: 'ref-row' }, [
-      el('span', { className: 'ref-cmd' }, s.cmd),
-      el('span', { className: 'ref-desc' }, s.desc),
     ]);
     cont.appendChild(row);
   });
@@ -2253,7 +2221,6 @@ function init() {
   renderRefList('ex-cmds', EX_COMMANDS);
   renderRefList('ctrl-cmds', CTRL_COMMANDS);
   renderTextObjects();
-  renderSettings();
   renderCombos();
   renderTips();
   renderCredit();
