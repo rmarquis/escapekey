@@ -474,6 +474,10 @@ header .subtitle {
   color: var(--text-sub);
   border-left: 3px solid var(--cat-extra);
 }
+.tip-highlight {
+  color: var(--cat-command);
+  font-weight: 600;
+}
 
 /* === LEGEND & REFERENCE === */
 .reference {
@@ -663,6 +667,10 @@ html[data-theme="light"] .key:active {
     <div class="ref-card">
       <h3>Common Combos</h3>
       <div class="ref-list" id="combos"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Practical Vim</h3>
+      <div class="ref-list" id="practical-vim"></div>
     </div>
   </div>
 
@@ -1458,6 +1466,24 @@ function el(tag, attrs, children) {
 
 function clearEl(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
+function parseTip(text) {
+  var parts = [];
+  var regex = /Tip\s+(\d+):/g;
+  var lastIndex = 0;
+  var match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(document.createTextNode(text.slice(lastIndex, match.index)));
+    }
+    parts.push(el('strong', { className: 'tip-highlight' }, 'Tip ' + match[1] + ':'));
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(document.createTextNode(text.slice(lastIndex)));
+  }
+  return parts.length > 0 ? parts : [document.createTextNode(text)];
+}
+
 var $ = function(sel) { return document.querySelector(sel); };
 var $$ = function(sel) { return document.querySelectorAll(sel); };
 
@@ -1678,7 +1704,26 @@ function renderTips() {
   ];
   tips.forEach(function(t) {
     cont.appendChild(el('div', { className: 'ref-row' }, [
-      el('span', { className: 'ref-desc' }, t),
+      el('span', { className: 'ref-desc' }, parseTip(t)),
+    ]));
+  });
+}
+
+function renderPracticalVimIndex() {
+  var cont = document.getElementById('practical-vim');
+  var tipMap = {};
+  Object.keys(TIP_REFS).forEach(function(key) {
+    TIP_REFS[key].forEach(function(tipNum) {
+      if (!tipMap[tipNum]) tipMap[tipNum] = [];
+      tipMap[tipNum].push(key);
+    });
+  });
+  var sortedTips = Object.keys(tipMap).map(Number).sort(function(a, b) { return a - b; });
+  sortedTips.forEach(function(tipNum) {
+    var keys = tipMap[tipNum].join(', ');
+    cont.appendChild(el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-cmd', style: { minWidth: '52px' } }, 'Tip ' + tipNum),
+      el('span', { className: 'ref-desc' }, keys),
     ]));
   });
 }
@@ -1830,7 +1875,7 @@ function renderLesson() {
       if (lesson.tips && lesson.tips.length > 0) {
         var tipsUl = el('ul', { className: 'lesson-tips' });
         lesson.tips.forEach(function(tip) {
-          tipsUl.appendChild(el('li', null, tip));
+          tipsUl.appendChild(el('li', null, parseTip(tip)));
         });
         panel.appendChild(tipsUl);
       }
@@ -2223,6 +2268,7 @@ function init() {
   renderTextObjects();
   renderCombos();
   renderTips();
+  renderPracticalVimIndex();
   renderCredit();
   renderDetailPlaceholder();
   updateDisplay();
