@@ -994,6 +994,20 @@ var NOTES = {
   4: 'ZZ to save & quit, ZQ to quit without saving.',
   5: 'zt: scroll cursor to top, zb: bottom, zz: center.',
   6: 'gg: go to top of file, gf: open file under cursor.',
+  7: 'The dot command (.) repeats the last change. It is the most powerful command in Vim. Combine with a one-keystroke motion for the Dot Formula.',
+  8: 'Text objects come in pairs: i = inner (inside delimiters), a = around (includes delimiters). Example: ci" changes inside quotes; da" deletes around quotes.',
+  9: 'Visual mode is intuitive but does not always play well with the dot command. Prefer Normal mode operators when you want repeatability.',
+  10: 'g; jumps to the position of the last change; g, jumps forward in the change list. Navigate your edit history like a timeline.',
+  11: 'Ctrl-O jumps back to the previous position in the jump list; Ctrl-I jumps forward. Navigate across files effortlessly.',
+  12: ':%s/old/new/g replaces all occurrences. Add c to confirm each (gc), i to ignore case (gi). Leave search field blank to reuse last pattern.',
+  13: ':g/pattern/cmd runs an Ex command on every line matching a pattern. :v/pattern/cmd runs on lines that do NOT match.',
+  14: 'Ctrl-R= in Insert mode evaluates the expression register. Use it for calculations, incrementing counters, or inserting dynamic content.',
+  15: 'When recording macros: normalize cursor position (0, ^, $), strike with precision, and abort early if something goes wrong.',
+  16: 'Add //e to a search to place the cursor at the end of the match. Example: /word/e then . to repeat an edit at each match end.',
+  17: 'gn selects the next search match as a motion. dgn deletes the next match; cgn changes it. Repeat with . for subsequent matches.',
+  18: 'gp and gP paste like p/P but leave the cursor AFTER the new text. ]p and [p paste with indentation adjusted to the target.',
+  19: 'Vim maintains an undo tree, not just a linear history. Use g- and g+ to traverse branches of changes.',
+  20: 'The quickfix list collects locations across files. :cnext/:cprev navigate; :colder/:cnewer recall previous lists.',
 };
 
 var TEXT_OBJECTS = [
@@ -1007,21 +1021,41 @@ var TEXT_OBJECTS = [
   { keys: 'i{ / a{', label: 'inner/around braces' },
   { keys: 'i[ / a[', label: 'inner/around brackets' },
   { keys: 'it / at', label: 'inner/around XML tag' },
+  { keys: 'i` / a`', label: 'inner/around backticks' },
+  { keys: 'i< / a<', label: 'inner/around angle brackets' },
 ];
 
 var EX_COMMANDS = [
   { cmd: ':w',          desc: 'Save file' },
   { cmd: ':q',          desc: 'Quit' },
   { cmd: ':q!',         desc: 'Quit without saving' },
-  { cmd: ':wq',         desc: 'Save and quit' },
+  { cmd: ':wq or :x',   desc: 'Save and quit' },
+  { cmd: ':qa',         desc: 'Quit all' },
+  { cmd: ':wa',         desc: 'Save all' },
   { cmd: ':e file',     desc: 'Open file' },
-  { cmd: ':%s/x/y/g',  desc: 'Replace x with y filewide' },
+  { cmd: ':%s/x/y/g',   desc: 'Replace x with y filewide' },
+  { cmd: ':s/x/y/gc',   desc: 'Replace with confirmation' },
   { cmd: ':h topic',    desc: 'Help on topic' },
   { cmd: ':new',        desc: 'New buffer' },
+  { cmd: ':bd',         desc: 'Close buffer' },
+  { cmd: ':ls',         desc: 'List buffers' },
+  { cmd: ':sp file',    desc: 'Horizontal split' },
+  { cmd: ':vsp file',   desc: 'Vertical split' },
+  { cmd: ':norm cmd',   desc: 'Run Normal cmd on range' },
+  { cmd: ':g/pat/d',    desc: 'Delete lines matching pat' },
+  { cmd: ':v/pat/d',    desc: 'Delete lines NOT matching' },
+  { cmd: ':sh',         desc: 'Open shell' },
+  { cmd: ':r file',     desc: 'Insert file contents' },
+  { cmd: ':reg',        desc: 'Show registers' },
+  { cmd: ':marks',      desc: 'Show marks' },
+  { cmd: ':jumps',      desc: 'Show jump list' },
+  { cmd: ':changes',    desc: 'Show change list' },
 ];
 
 var CTRL_COMMANDS = [
   { cmd: 'Ctrl+R', desc: 'Redo' },
+  { cmd: 'Ctrl+O', desc: 'Jump back' },
+  { cmd: 'Ctrl+I', desc: 'Jump forward' },
   { cmd: 'Ctrl+F', desc: 'Page down' },
   { cmd: 'Ctrl+B', desc: 'Page up' },
   { cmd: 'Ctrl+D', desc: 'Half page down' },
@@ -1029,6 +1063,16 @@ var CTRL_COMMANDS = [
   { cmd: 'Ctrl+E', desc: 'Scroll line down' },
   { cmd: 'Ctrl+Y', desc: 'Scroll line up' },
   { cmd: 'Ctrl+V', desc: 'Block-visual mode' },
+  { cmd: 'Ctrl+G', desc: 'Show filename/position' },
+  { cmd: 'Ctrl+L', desc: 'Redraw / clear search hl' },
+  { cmd: 'Ctrl+N', desc: 'Autocomplete next' },
+  { cmd: 'Ctrl+P', desc: 'Autocomplete previous' },
+  { cmd: 'Ctrl+A', desc: 'Increment number' },
+  { cmd: 'Ctrl+X', desc: 'Decrement number' },
+  { cmd: 'Ctrl+W w', desc: 'Switch window' },
+  { cmd: 'Ctrl+W s', desc: 'Split window' },
+  { cmd: 'Ctrl+W v', desc: 'Vsplit window' },
+  { cmd: 'Ctrl+W q', desc: 'Close window' },
 ];
 
 var CAT_META = {
@@ -1445,6 +1489,14 @@ function renderTips() {
     'bol = beginning of line, eol = end of line',
     'Keys marked with \xb7 expect a character argument afterwards',
     'Operators can be doubled to act on the current line (dd, yy, cc)',
+    'The Dot Formula: one keystroke to move, one to change, then . to repeat',
+    'Tip 11: Don\'t count if you can repeat (dw. is often better than d2w)',
+    'Tip 23: Prefer operators to visual commands when you want repeatability',
+    'Tip 48: Real lines vs display lines: j/k vs gj/gk, 0/$ vs g0/g$',
+    'Tip 61: Use registers ("a, "0) to hold multiple clipboards',
+    'Tip 80: Enable :set hlsearch and :set incsearch for better searching',
+    'Tip 84: gn operates on the next search match as a motion',
+    'Tip 90: Add c to :s for confirmation: :%s/old/new/gc',
   ];
   tips.forEach(function(t) {
     cont.appendChild(el('div', { className: 'ref-row' }, [
