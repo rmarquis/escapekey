@@ -291,6 +291,11 @@ header .subtitle {
 .key.dimmed:hover {
   opacity: 0.4;
 }
+.key.highlighted {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 0 2px var(--text), 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1;
+}
 
 /* Category colors — single custom property drives border + char color */
 .key[data-cat="motion"]  { --cat-color: var(--cat-motion); }
@@ -1455,6 +1460,35 @@ function clearEl(node) { while (node.firstChild) node.removeChild(node.firstChil
 var $ = function(sel) { return document.querySelector(sel); };
 var $$ = function(sel) { return document.querySelectorAll(sel); };
 
+function highlightKey(keyId) {
+  var keyEl = document.querySelector('.key[data-key="' + keyId + '"]');
+  if (keyEl) keyEl.classList.add('highlighted');
+}
+
+function unhighlightKey(keyId) {
+  var keyEl = document.querySelector('.key[data-key="' + keyId + '"]');
+  if (keyEl) keyEl.classList.remove('highlighted');
+}
+
+function getKeyLessonPaths(keyId, isShifted) {
+  var paths = [];
+  Object.keys(LEVEL_DEFS).forEach(function(tag) {
+    var def = LEVEL_DEFS[tag];
+    var keyLevels = def.keys[keyId];
+    if (!keyLevels) return;
+    var l = isShifted ? keyLevels.s : keyLevels.n;
+    if (!l) return;
+    if (Array.isArray(l)) {
+      l.forEach(function(level) {
+        paths.push({ tag: tag, level: level, label: def.labels[level - 1] || '' });
+      });
+    } else {
+      paths.push({ tag: tag, level: l, label: def.labels[l - 1] || '' });
+    }
+  });
+  return paths;
+}
+
 // RENDERING
 function makeKeyEl(keyId, extraClass) {
   var w = KEY_WIDTHS[keyId];
@@ -1843,6 +1877,12 @@ function renderLesson() {
       li.addEventListener('click', function() {
         selectKey(item.keyId);
       });
+      li.addEventListener('mouseenter', function() {
+        highlightKey(item.keyId);
+      });
+      li.addEventListener('mouseleave', function() {
+        unhighlightKey(item.keyId);
+      });
       list.appendChild(li);
     });
     panel.appendChild(list);
@@ -1890,6 +1930,20 @@ function renderDetail(keyId) {
     el('p', { style: { fontSize: '0.75rem', color: 'var(--text-dim)' } }, secMeta.label),
   ]);
   body.appendChild(otherSection);
+
+  var lessonPaths = getKeyLessonPaths(keyId, shift);
+  if (lessonPaths.length > 0) {
+    var lpSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Lesson Path')]);
+    var lpUl = el('ul');
+    lessonPaths.forEach(function(lp) {
+      var filterMeta = FILTERS.find(function(f) { return f.id === lp.tag; });
+      var text = (filterMeta ? filterMeta.label : lp.tag);
+      if (lp.label) text += ' \u2014 Level ' + lp.level + ' (' + lp.label + ')';
+      lpUl.appendChild(el('li', null, text));
+    });
+    lpSection.appendChild(lpUl);
+    body.appendChild(lpSection);
+  }
 
   if (keyId === 'LCtrl' || keyId === 'RCtrl') {
     var ctrlSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Ctrl commands')]);
