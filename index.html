@@ -570,6 +570,16 @@ header .subtitle {
   min-width: 46px;
   font-size: 0.75rem;
 }
+.tip-index-row.tip-unreferenced .ref-desc {
+  color: var(--text-dim);
+}
+.tip-index-row.tip-referenced .ref-cmd {
+  color: var(--cat-command);
+  font-weight: 600;
+}
+.tip-index-row.tip-referenced .ref-desc {
+  color: var(--text);
+}
 
 .credit {
   text-align: center;
@@ -1435,6 +1445,132 @@ var TIP_REFS = {
   'z': [5],
 };
 
+
+var PRACTICAL_VIM_TIPS = [
+  { num: 1, title: "Meet the Dot Command", keys: "x, u, dd, >G, j, j., >, i" },
+  { num: 2, title: "Don’t Repeat Yourself", keys: "$, a, j$., j, A, $a, C, c$" },
+  { num: 3, title: "Take One Step Back, Then Three Forward", keys: "f+, s, ;, ;., f{char}, f" },
+  { num: 4, title: "Act, Repeat, Reverse", keys: "u, f{char}, t{char}, ;, ,, F{char}, T{char}, <CR>" },
+  { num: 5, title: "Find and Replace by Hand", keys: "*, cw, n, *nn, n.n.n." },
+  { num: 6, title: "Meet the Dot Formula", keys: "A, j, j., f+, s, ;., *, cw" },
+  { num: 7, title: "Pause with Your Brush Off the Page", keys: "N/A" },
+  { num: 8, title: "Chunk Your Undos", keys: "u, i, <Esc>, A, <CR>, <Esc>o, <Up>, <Down>" },
+  { num: 9, title: "Compose Repeatable Changes", keys: "db, x, b, dw, aw, daw, dbx, bdw" },
+  { num: 10, title: "Use Counts to Do Simple Arithmetic", keys: "<C-a>, <C-x>, 10<C-a>, yyp, cW, f0, i, 180<C-x>" },
+  { num: 11, title: "Don’t Count If You Can Repeat", keys: "d2w, 2dw, 2w, dw., u, dw, uu, 2u" },
+  { num: 12, title: "Combine and Conquer", keys: "d{motion}, dl, daw, dap, c{motion}, y{motion}, c, d" },
+  { num: 13, title: "Make Corrections Instantly from Insert Mode", keys: "A, <C-h>, <C-w>, <C-u>" },
+  { num: 14, title: "Get Back to Normal Mode", keys: "<Esc>, <C-[>, <C-o>, zz, <C-o>zz, k, j, K" },
+  { num: 15, title: "Paste from a Register Without Leaving Insert Mode", keys: "yt,, jA, <C-r>0, t{char}, <C-r>{register}" },
+  { num: 16, title: "Do Back-of-the-Envelope Calculations in Place", keys: "<C-r>=, <CR>, A" },
+  { num: 17, title: "Insert Unusual Characters by Character Code", keys: "<C-v>{code}, <C-v>065, <C-v>u{1234}, <C-v>u00bf, ga, <C-v>, <Tab>, <C-v><Tab>" },
+  { num: 18, title: "Insert Unusual Characters by Digraph", keys: "<C-k>{char1}{char2}, <C-k>?I" },
+  { num: 19, title: "Overwrite Existing Text with Replace Mode", keys: "f., R, <Esc>, <Insert>, gR, r{char}, gr{char}" },
+  { num: 20, title: "Grok Visual Mode", keys: "h, j, k, l, f{char}, ;, ,, n" },
+  { num: 21, title: "Define a Visual Selection", keys: "v, V, <C-v>, gv, <Esc>, <C-[>, o, vbb" },
+  { num: 22, title: "Repeat Line-Wise Visual Commands", keys: "<, >, gv, Vj, >., 2>, u" },
+  { num: 23, title: "Prefer Operators to Visual Commands Where Possible", keys: "vit, it, U, j., gU{motion}, gUit, vitU, gU" },
+  { num: 24, title: "Edit Tabular Data with Visual-Block Mode", keys: "<C-v>3j, x..., gv, r|, yyp, Vr-, <C-v>, x" },
+  { num: 25, title: "Change Columns of Text", keys: "<C-v>jje, c, <Esc>" },
+  { num: 26, title: "Append After a Ragged Visual Block", keys: "<C-v>jj$, A, $, i, a, I" },
+  { num: 27, title: "Meet Vim’s Command Line", keys: ":, <CR>, <Esc>, /, <C-r>=, <C-w>, <C-u>, <C-v>" },
+  { num: 28, title: "Execute a Command on One or More Consecutive Lines", keys: "3G, dd, 2G, VG, :" },
+  { num: 29, title: "Duplicate or Move Lines Using ‘:t’ and ‘:m’ Commands", keys: "yyp, 6G, yy, <C-o>, p, Vjj, dGp, d" },
+  { num: 30, title: "Run Normal Mode Commands Across a Range", keys: "j., A, jVG" },
+  { num: 31, title: "Repeat the Last Ex Command", keys: "@:, @@, <C-o>, u" },
+  { num: 32, title: "Tab-Complete Your Ex Commands", keys: "<Tab>, <C-d>, <S-Tab>, <C-n>, <Right>, <C-p>, <Left>" },
+  { num: 33, title: "Insert the Current Word at the Command Prompt", keys: "<C-r><C-w>, *, <CR>, cw, <C-r><C-a>" },
+  { num: 34, title: "Recall Commands from History", keys: ":, <Up>, <Down>, /, q:, k, j, <CR>" },
+  { num: 35, title: "Run Commands in the Shell", keys: "Ctrl, z, !{motion}, !G" },
+  { num: 36, title: "Run Multiple Ex Commands as a Batch", keys: "u" },
+  { num: 37, title: "Track Open Files with the Buffer List", keys: "<C-^>, [, ], [a, ]a, [q, ]q, [l" },
+  { num: 38, title: "Group Buffers into a Collection with the Argument List", keys: "N/A" },
+  { num: 39, title: "Manage Hidden Files", keys: "Go" },
+  { num: 40, title: "Divide Your Workspace into Split Windows", keys: "<C-w>s, <C-w>v, <C-w>w, <C-w>h, <C-w>j, <C-w>k, <C-w>l, <C-w><C-w>" },
+  { num: 41, title: "Organize Your Window Layouts with Tab Pages", keys: "<C-w>T, {N}gt, gT, gt" },
+  { num: 42, title: "Open a File by Its Filepath Using ‘:edit’", keys: "<Tab>, %%" },
+  { num: 43, title: "Open a File by Its Filename Using ‘:find’", keys: "<Tab>" },
+  { num: 44, title: "Explore the File System with netrw", keys: "k, j, <CR>, -, <C-^>" },
+  { num: 45, title: "Save Files to Nonexistent Directories", keys: "<C-g>" },
+  { num: 46, title: "Save a File as the Super User", keys: "<C-g>, Go, l" },
+  { num: 47, title: "Keep Your Fingers on the Home Row", keys: "a, s, d, f, j, k, l, ;" },
+  { num: 48, title: "Distinguish Between Real Lines and Display Lines", keys: "j, k, gj, gk, 0, g0, ^, g^" },
+  { num: 49, title: "Move Word-Wise", keys: "w, b, e, ge, h, l, ea, gea" },
+  { num: 50, title: "Find by Character", keys: "f{char}, fx, fo, fc, ;, ;;, ,, <Leader>" },
+  { num: 51, title: "Search to Navigate", keys: "f{char}, t{char}, <CR>, n, N, fe, v, h" },
+  { num: 52, title: "Trace Your Selection with Precision Text Objects", keys: "vi}, a\", i>, it, at, a], l, w" },
+  { num: 53, title: "Delete Around, or Change Inside", keys: "i), i\", it, iw, aw, iW, aW, is" },
+  { num: 54, title: "Mark Your Place and Snap Back to It", keys: "m{a-zA-Z}, ’{mark}, `{mark}, mm, `m" },
+  { num: 55, title: "Jump Between Matching Parentheses", keys: "%, h, l, r[, ``, dt{, r], <C-o>" },
+  { num: 56, title: "Traverse the Jump List", keys: "<C-o>, <C-i>, [count]G, <CR>, n, N, %, (" },
+  { num: 57, title: "Traverse the Change List", keys: "u<C-r>, g;, g,, ;, ,, f{char}, `., `^" },
+  { num: 58, title: "Jump to the Filename Under the Cursor", keys: "gf, fp, <C-o>, <C-]>" },
+  { num: 59, title: "Snap Between Files Using Global Marks", keys: "m{letter}, `{letter}, mV, `V, <C-o>, mM, `M" },
+  { num: 60, title: "Delete, Yank, and Put with Vim’s Unnamed Register", keys: "x, p, xp, dd, ddp, yyp, yiw, jww" },
+  { num: 61, title: "Grok Vim’s Registers", keys: "\"{register}, \"ayiw, \"bdd, \"ap, \"bp, \"\"p, p, x" },
+  { num: 62, title: "Replace a Visual Selection with a Register", keys: "p, yiw, jww, ve, u, gv, \"0p, fc" },
+  { num: 63, title: "Paste from a Register", keys: "xp, ddp, p, P, dd, yy, dap, x" },
+  { num: 64, title: "Interact with the System Clipboard", keys: "Cmd, v, Ctrl, Shift, Alt, <f5>, \"+p" },
+  { num: 65, title: "Record and Execute a Macro", keys: "q, q{register}, qa, A, I, @{register}, @@, j" },
+  { num: 66, title: "Normalize, Strike, Abort", keys: "n, 0, gg, l, w, b, e, ge" },
+  { num: 67, title: "Play Back with a Count", keys: ";., 11;., ;, ;11., qq;.q, qq, q, 11@q" },
+  { num: 68, title: "Repeat a Change on Contiguous Lines", keys: "qa, 0f., r), w~, j, q, 0, f." },
+  { num: 69, title: "Append Commands to a Macro", keys: "qa, 0f.r)w~, q, j, qA" },
+  { num: 70, title: "Act Upon a Collection of Files", keys: "qa, gg, <CR>, O, j>G, Go, q, >G" },
+  { num: 71, title: "Evaluate an Iterator to Number Items in a List", keys: "<C-a>, <C-x>, <C-r>=i<CR>, qa, I<C-r>=, <CR>, q, jVG" },
+  { num: 72, title: "Edit the Contents of a Macro", keys: "~, vU, <Esc>, <C-[>, G, \"ap, p, f~" },
+  { num: 73, title: "Tune the Case Sensitivity of Search Patterns", keys: "N/A" },
+  { num: 74, title: "Use the \\v Pattern Switch for Regex Searches", keys: "N/A" },
+  { num: 75, title: "Use the \\V Literal Switch for Verbatim Searches", keys: "<CR>, n" },
+  { num: 76, title: "Use Parentheses to Capture Submatches", keys: "vipJ" },
+  { num: 77, title: "Stake the Boundaries of a Word", keys: "<CR>, *, #, /<Up>, g*, g#" },
+  { num: 78, title: "Stake the Boundaries of a Match", keys: "<CR>" },
+  { num: 79, title: "Escape Problem Characters", keys: "\"uyi[, <CR>, <C-r>=" },
+  { num: 80, title: "Meet the Search Command", keys: "/, <CR>, <Esc>, ?, n, N, gn, gN" },
+  { num: 81, title: "Highlight Search Matches", keys: "<CR>, <C-l>" },
+  { num: 82, title: "Preview the First Match Before Execution", keys: "<CR>, <Esc>, <C-r><C-w>" },
+  { num: 83, title: "Offset the Cursor to the End of a Search Match", keys: "<CR>, ea, ne., n, e, a, n." },
+  { num: 84, title: "Operate on a Complete Search Match", keys: "gn, gU{motion}, <CR>, gUgn, n, n., gU, dgn" },
+  { num: 85, title: "Create Complex Patterns by Iterating upon Search History", keys: "/<Up>, <Left>, q/, c%, f[, i, <CR>" },
+  { num: 86, title: "Count the Matches for the Current Pattern", keys: "n, N" },
+  { num: 87, title: "Search for the Current Visual Selection", keys: "*, y, <CR>, #" },
+  { num: 88, title: "Meet the Substitute Command", keys: "N/A" },
+  { num: 89, title: "Find and Replace Every Match in a File", keys: "u" },
+  { num: 90, title: "Eyeball Each Substitution", keys: "y, n, yny, q, l, a, <C-e>, <C-y>" },
+  { num: 91, title: "Reuse the Last Search Pattern", keys: "*, <C-r>/" },
+  { num: 92, title: "Replace with the Contents of a Register", keys: "<C-r>{register}, <C-r>0, <CR>, \"ay" },
+  { num: 93, title: "Repeat the Previous Substitute Command", keys: "g&amp;, Vjj, yP, u, gv, &amp;" },
+  { num: 94, title: "Rearrange CSV Fields Using Submatches", keys: "N/A" },
+  { num: 95, title: "Perform Arithmetic on the Replacement", keys: "N/A" },
+  { num: 96, title: "Swap Two or More Words", keys: "N/A" },
+  { num: 97, title: "Find and Replace Across Multiple Files", keys: "N/A" },
+  { num: 98, title: "Meet the Global Command", keys: "N/A" },
+  { num: 99, title: "Delete Lines Containing a Pattern", keys: "N/A" },
+  { num: 100, title: "Collect TODO Items in a Register", keys: "qaq, qa, q, \"ap" },
+  { num: 101, title: "Alphabetize the Properties of Each Rule in a CSS File", keys: "vi{" },
+  { num: 102, title: "Meet ctags", keys: "N/A" },
+  { num: 103, title: "Configure Vim to Work with ctags", keys: "<F5>" },
+  { num: 104, title: "Navigate Keyword Definitions with Vim’s Tag Navigation Commands", keys: "<C-]>, g<C-]>, fS, <C-t>, <CR>" },
+  { num: 105, title: "Compile Code Without Leaving Vim", keys: "<C-o>" },
+  { num: 106, title: "Browse the Quickfix List", keys: "k, j, <CR>" },
+  { num: 107, title: "Recall Results from a Previous Quickfix List", keys: "N/A" },
+  { num: 108, title: "Customize the External Compiler", keys: "N/A" },
+  { num: 109, title: "Call grep Without Leaving Vim", keys: "N/A" },
+  { num: 110, title: "Customize the grep Program", keys: "N/A" },
+  { num: 111, title: "Grep with Vim’s Internal Search Engine", keys: "<C-r>/" },
+  { num: 112, title: "Meet Vim’s Keyword Autocompletion", keys: "<C-p>, <C-n>, <C-x>, <C-x><C-n>, <C-x><C-i>, <C-x><C-]>, <C-x><C-k>, <C-x><C-l>" },
+  { num: 113, title: "Work with the Autocomplete Pop-Up Menu", keys: "<C-n>, <C-p>, <Down>, <Up>, <C-y>, <C-e>, <C-h> (and <BS>), <C-l>" },
+  { num: 114, title: "Understand the Source of Keywords", keys: "<C-x><C-n>, <C-x><C-i>, <C-x><C-]>, <C-n>, <C-x>" },
+  { num: 115, title: "Autocomplete Words from the Dictionary", keys: "<C-x><C-k>" },
+  { num: 116, title: "Autocomplete Entire Lines", keys: "<C-x><C-l>, o" },
+  { num: 117, title: "Autocomplete Sequences of Words", keys: "a, <C-x><C-p>, <C-p>, <C-x><C-n>, <C-x><C-l>" },
+  { num: 118, title: "Autocomplete Filenames", keys: "<Tab>, <C-x><C-f>, application.js, i" },
+  { num: 119, title: "Autocomplete with Context Awareness", keys: "<C-x><C-o>" },
+  { num: 120, title: "Spell Check Your Work", keys: "[s, ]s, z=, 1<CR>, <Esc>, 1z=, zg, zw" },
+  { num: 121, title: "Use Alternate Spelling Dictionaries", keys: "N/A" },
+  { num: 122, title: "Add Words to the Spell File", keys: "zg, zw, zug, ciw, 2zg, 1zg" },
+  { num: 123, title: "Fix Spelling Errors from Insert Mode", keys: "[s, 1z=, A, <C-x>s, <C-x><C-s>, z=" }
+];
 function getKeyLevel(keyId, isShifted, tag, targetLevel) {
   if (targetLevel === undefined) targetLevel = state.activeLevel;
   var def = LEVEL_DEFS[tag];
@@ -1759,19 +1895,22 @@ function renderTips() {
 
 function renderPracticalVimIndex() {
   var cont = document.getElementById('practical-vim');
-  var tipMap = {};
+  var tipToKeys = {};
   Object.keys(TIP_REFS).forEach(function(key) {
     TIP_REFS[key].forEach(function(tipNum) {
-      if (!tipMap[tipNum]) tipMap[tipNum] = [];
-      tipMap[tipNum].push(key);
+      if (!tipToKeys[tipNum]) tipToKeys[tipNum] = [];
+      tipToKeys[tipNum].push(key);
     });
   });
-  var sortedTips = Object.keys(tipMap).map(Number).sort(function(a, b) { return a - b; });
-  sortedTips.forEach(function(tipNum) {
-    var keys = tipMap[tipNum].join(', ');
-    cont.appendChild(el('div', { className: 'ref-row' }, [
-      el('span', { className: 'ref-cmd', style: { minWidth: '52px' } }, 'Tip ' + tipNum),
-      el('span', { className: 'ref-desc' }, keys),
+  PRACTICAL_VIM_TIPS.forEach(function(tip) {
+    var isReferenced = !!tipToKeys[tip.num];
+    var label = tip.title;
+    if (isReferenced) {
+      label += ' \u2014 ' + tipToKeys[tip.num].join(', ');
+    }
+    cont.appendChild(el('div', { className: 'ref-row tip-index-row' + (isReferenced ? ' tip-referenced' : ' tip-unreferenced') }, [
+      el('span', { className: 'ref-cmd tip-index-num' }, 'Tip ' + tip.num),
+      el('span', { className: 'ref-desc' }, label),
     ]));
   });
 }
