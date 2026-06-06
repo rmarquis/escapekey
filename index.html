@@ -900,8 +900,8 @@ var KEYS = {
     notes: [16],
   },
   'Tab': {
-    normal:  { char: 'Tab', label: 'jump fwd',    cat: 'motion',  tags: ['moving'] },
-    shifted: { char: 'S-Tab', label: 'jump back', cat: 'motion',  tags: ['moving'] },
+    normal:  { char: 'Tab', label: 'tab',         cat: 'extra',   tags: [] },
+    shifted: { char: 'S-Tab', label: 's-tab',     cat: 'extra',   tags: [] },
     notes: [],
   },
   'CapsLock': {
@@ -1204,7 +1204,6 @@ var LEVEL_DEFS = {
       '9': { s: 5 },
       '[': { s: 6 }, ']': { s: 6 },
       '\\': { s: 6 },
-      'Tab': { n: 6, s: 6 },
     }
   },
   actions: {
