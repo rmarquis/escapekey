@@ -1743,7 +1743,7 @@ function selectKey(keyId) {
 function renderDetailPlaceholder() {
   var panel = $('#detail');
   clearEl(panel);
-  panel.appendChild(el('div', { className: 'detail-placeholder' }, 'Hover or click any key to see details. Press keys on your keyboard to explore.'));
+  panel.appendChild(el('div', { className: 'detail-placeholder' }, 'Hover, click, or press keys to explore. Select a category above to see progressive lessons with tips and exercises. Use \u2190 \u2192 arrow keys to switch categories and \u2191 \u2193 to change levels.'));
 }
 
 function clearSelection() {
@@ -2138,7 +2138,7 @@ function loadState() {
         state.activeFilter = savedFilter;
         state.activeLevel = savedLevel ? parseInt(savedLevel, 10) : 99;
         var def = LEVEL_DEFS[state.activeFilter];
-        if (def && (state.activeLevel < 1 || state.activeLevel > def.max)) {
+        if (def && state.activeLevel !== 99 && (state.activeLevel < 1 || state.activeLevel > def.max)) {
           state.activeLevel = 1;
         }
       }
