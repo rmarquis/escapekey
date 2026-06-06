@@ -50,7 +50,11 @@ html[data-theme="light"] {
   --cat-count: #8890a8;
 }
 
-html { font-size: 18px; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
+html { font-size: 18px; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; scroll-behavior: smooth; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
@@ -84,6 +88,11 @@ header .subtitle {
 .usage-hint {
   font-size: 0.75rem;
   color: var(--text-dim);
+}
+.match-count {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+  min-height: 20px;
 }
 
 /* === CONTROLS === */
@@ -624,7 +633,8 @@ html[data-theme="light"] .key:active {
   <div class="controls">
     <div class="filters" id="filters"></div>
     <div class="level-bar" id="level-bar"></div>
-    <p class="usage-hint">Hover, click, or press keys &middot; Hold Shift for shifted layer &middot; &larr;&rarr; categories &middot; &uarr;&darr; levels</p>
+    <p class="usage-hint">Hover, click, or press keys &middot; Hold Shift for shifted layer &middot; &larr;&rarr; categories &middot; &uarr;&darr; levels &middot; Search to filter</p>
+    <div class="match-count" id="match-count"></div>
   </div>
 
   <div class="keyboard" id="keyboard"></div>
@@ -1722,6 +1732,7 @@ function updateDisplay() {
     track.classList.remove('active');
   }
 
+  var activeCount = 0;
   $$('.key').forEach(function(keyEl) {
     var keyId = keyEl.getAttribute('data-key');
     var data = KEYS[keyId];
@@ -1743,6 +1754,7 @@ function updateDisplay() {
       otherLayer.char.toLowerCase().indexOf(query) >= 0;
 
     var active = matchesFilter && matchesSearch;
+    if (active) activeCount++;
     keyEl.classList.toggle('dimmed', !active);
     keyEl.classList.toggle('selected', state.selectedKey === keyId);
 
@@ -1752,6 +1764,14 @@ function updateDisplay() {
       keyEl.classList.toggle('key-pressed', isHeld);
     }
   });
+  var matchCountEl = document.getElementById('match-count');
+  if (matchCountEl) {
+    if (query) {
+      matchCountEl.textContent = activeCount + ' key' + (activeCount === 1 ? '' : 's') + ' match';
+    } else {
+      matchCountEl.textContent = '';
+    }
+  }
   // Only rebuild lesson panel when relevant state changes
   if (_lastLesson.filter !== state.activeFilter || _lastLesson.level !== state.activeLevel ||
       _lastLesson.shift !== shift || _lastLesson.selected !== state.selectedKey) {
