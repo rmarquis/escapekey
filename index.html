@@ -1252,7 +1252,7 @@ var CAT_META = {
   command:  { label: 'Command',  color: 'var(--cat-command)',  desc: 'Direct action command' },
   insert:   { label: 'Insert',   color: 'var(--cat-insert)',   desc: 'Enters insert mode' },
   operator: { label: 'Operator', color: 'var(--cat-operator)', desc: 'Requires a motion afterwards; operates between cursor and destination' },
-  extra:    { label: 'Extra',    color: 'var(--cat-extra)',    desc: 'Special function; requires extra character input (shown with \xb7)' },
+  extra:    { label: 'Extra',    color: 'var(--cat-extra)',    desc: 'Special function; requires extra character input (shown with \u2022)' },
   count:    { label: 'Count',    color: 'var(--cat-count)',    desc: 'Number prefix \u2014 type before an action to repeat it' },
 };
 
@@ -1875,7 +1875,7 @@ function renderTips() {
   var tips = [
     'word = delimited by punctuation & whitespace; WORD = delimited only by whitespace',
     'bol = beginning of line, eol = end of line',
-    'Keys marked with \xb7 expect a character argument afterwards',
+    'Keys marked with \u2022 expect a character argument afterwards',
     'Operators can be doubled to act on the current line (dd, yy, cc)',
     'The Dot Formula: one keystroke to move, one to change, then . to repeat',
     'Tip 11: Don\'t count if you can repeat (dw. is often better than d2w)',
@@ -1949,7 +1949,7 @@ function updateDisplay() {
 
     keyEl._charEl.textContent = layer.char;
     keyEl._labelEl.textContent = layer.label;
-    keyEl._dotEl.textContent = layer.dot ? '\xb7' : '';
+    keyEl._dotEl.textContent = layer.dot ? '\u2022' : '';
     keyEl.setAttribute('data-cat', layer.cat);
 
     var otherLayer = shift ? data.normal : data.shifted;
@@ -2138,7 +2138,7 @@ function renderDetail(keyId) {
   ]);
   if (primary.dot) {
     headerInfo.appendChild(document.createTextNode(' '));
-    headerInfo.appendChild(el('span', { style: { color: 'var(--text-dim)', fontSize: '0.75rem' } }, '\xb7 expects character argument'));
+    headerInfo.appendChild(el('span', { style: { color: 'var(--text-dim)', fontSize: '0.75rem' } }, '\u2022 expects character argument'));
   }
 
   var header = el('div', { className: 'detail-header' }, [
