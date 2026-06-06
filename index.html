@@ -1374,11 +1374,11 @@ var LEVEL_DEFS = {
 
 var LESSONS = {
   moving: {
-    1: { title: 'Home Row Navigation', desc: 'Master hjkl and line boundaries before anything else. These are the arrows of Vim.', tips: ['Tip 47: Keep your fingers on the home row.', '0 = hard BOL, ^ = soft BOL (first non-blank), $ = EOL.', '- and + move to the previous/next line on the first non-blank character.', 'Enter/Space move down/right; Backspace moves left.'], exercise: 'Open any file and navigate for 2 minutes using only hjkl, 0, ^, $, +, and -. Do not touch the arrow keys.' },
-    2: { title: 'Word-Wise Motion', desc: 'Move by words instead of characters. This is the first step to faster navigation.', tips: ['Tip 49: w/b/e traverse words; W/B/E traverse WORDS (whitespace only).', 'Use the one that gets you closest with the fewest keystrokes.'], exercise: 'In a paragraph of text, jump from the first word to the last using only w, b, and e. Try both word and WORD variants.' },
-    3: { title: 'Find Character', desc: 'Jump to specific characters on the current line. Extremely powerful for inline navigation.', tips: ['Tip 50: f{char} finds forward; F{char} finds backward; t/T stop before the char.', '; repeats the last f/t in the same direction; , reverses it.', 'These work beautifully with operators: dt. deletes up to (but not including) the next period.'], exercise: 'On a line with punctuation, practice f, F, t, and T to jump to commas and periods. Use ; and , to repeat and reverse.' },
-    4: { title: 'Screen & Marks', desc: 'Navigate by screen position and set bookmarks for snap-back navigation.', tips: ['Tip 54: m{letter} sets a mark; \'{letter} jumps to the line; `{letter} jumps to the exact position.', 'H/M/L jump to the top/middle/bottom of the screen.'], exercise: 'Open a long file. Practice H, M, and L to jump to different screen positions. Set marks with m and jump back with `.' },
-    5: { title: 'Search & Coordinate Jumps', desc: 'Use search as a motion and jump to precise coordinates in the file.', tips: ['Tip 51: / and ? search; n/N repeat in the same/opposite direction.', '* searches for the word under cursor forward; # searches backward.', 'gg goes to the top of the file; G goes to the bottom (or to a specific line with a count).', '| goes to a specific column on the current line.'], exercise: 'Search for a common word with *. Use n/N to cycle matches. Jump to line 10 with 10G, then to column 20 with 20|.' },
+    1: { title: 'Home Row Navigation', desc: 'Master hjkl and line boundaries before anything else. These are the arrows of Vim.', tips: ['Keep your fingers on the home row.', '0 = hard BOL, ^ = soft BOL (first non-blank), $ = EOL.', '- and + move to the previous/next line on the first non-blank character.', 'Enter/Space move down/right; Backspace moves left.'], exercise: 'Open any file and navigate for 2 minutes using only hjkl, 0, ^, $, +, and -. Do not touch the arrow keys.' },
+    2: { title: 'Word-Wise Motion', desc: 'Move by words instead of characters. This is the first step to faster navigation.', tips: ['w/b/e traverse words; W/B/E traverse WORDS (whitespace only).', 'Use the one that gets you closest with the fewest keystrokes.'], exercise: 'In a paragraph of text, jump from the first word to the last using only w, b, and e. Try both word and WORD variants.' },
+    3: { title: 'Find Character', desc: 'Jump to specific characters on the current line. Extremely powerful for inline navigation.', tips: ['f{char} finds forward; F{char} finds backward; t/T stop before the char.', '; repeats the last f/t in the same direction; , reverses it.', 'These work beautifully with operators: dt. deletes up to (but not including) the next period.'], exercise: 'On a line with punctuation, practice f, F, t, and T to jump to commas and periods. Use ; and , to repeat and reverse.' },
+    4: { title: 'Screen & Marks', desc: 'Navigate by screen position and set bookmarks for snap-back navigation.', tips: ['m{letter} sets a mark; \'{letter} jumps to the line; `{letter} jumps to the exact position.', 'H/M/L jump to the top/middle/bottom of the screen.'], exercise: 'Open a long file. Practice H, M, and L to jump to different screen positions. Set marks with m and jump back with `.' },
+    5: { title: 'Search & Coordinate Jumps', desc: 'Use search as a motion and jump to precise coordinates in the file.', tips: ['/ and ? search; n/N repeat in the same/opposite direction.', '* searches for the word under cursor forward; # searches backward.', 'gg goes to the top of the file; G goes to the bottom (or to a specific line with a count).', '| goes to a specific column on the current line.'], exercise: 'Search for a common word with *. Use n/N to cycle matches. Jump to line 10 with 10G, then to column 20 with 20|.' },
     6: { title: 'Paragraphs & Blocks', desc: 'Move by paragraphs, sentences, matching delimiters, and jump lists.', tips: ['{ and } move by paragraph.', '( and ) move by sentence.', '% jumps to the matching bracket/paren/brace.', 'Ctrl-O and Ctrl-I jump back/forward through the jump list.'], exercise: 'Navigate a document with paragraphs using { and }. Use ( and ) to move by sentences. Try % to jump between matching braces.' },
   },
   modes: {
@@ -1388,44 +1388,44 @@ var LESSONS = {
     4: { title: 'Ex Mode', desc: 'Q enters Ex mode for batch command execution.', tips: ['Q enters Ex mode (like a command-line only interface).', 'Useful for running multiple Ex commands in sequence.', 'gQ enters improved Ex mode with better editing.'], exercise: 'Enter Ex mode with Q, run a few : commands, then type visual to return to Normal mode.' },
   },
   actions: {
-    1: { title: 'Basic Edits', desc: 'The essential commands for making small changes and undoing them.', tips: ['Tip 9: x deletes a single character; u undoes the last change; . repeats it.', 'r replaces a single character without entering insert mode.', 'X deletes the character before the cursor (like backspace in Normal mode).'], exercise: 'Type a sentence with mistakes. Use x and X to delete errors, r to fix single characters, and u to undo.' },
+    1: { title: 'Basic Edits', desc: 'The essential commands for making small changes and undoing them.', tips: ['x deletes a single character; u undoes the last change; . repeats it.', 'r replaces a single character without entering insert mode.', 'X deletes the character before the cursor (like backspace in Normal mode).'], exercise: 'Type a sentence with mistakes. Use x and X to delete errors, r to fix single characters, and u to undo.' },
     2: { title: 'Join & Case', desc: 'Combine lines and toggle case efficiently.', tips: ['J joins the current line with the one below.', '~ toggles the case of the character under the cursor.'], exercise: 'Join two short lines with J. Toggle the case of a word with ~. Notice how ~ acts on the character under the cursor.' },
-    3: { title: 'Replace Mode', desc: 'Overwrite existing text continuously.', tips: ['Tip 19: R enters Replace mode \u2014 like Insert but overwrites.', 'Use Replace mode when you want to overwrite a fixed-width block of text.'], exercise: 'Enter Replace mode with R and overwrite an entire word. Compare how it feels versus deleting and retyping.' },
-    4: { title: 'Repeat & Complex', desc: 'Master the dot command and compound edits.', tips: ['Tip 1: The dot command is the most powerful command in Vim \u2014 it repeats the last change.', 'Tip 6: The Dot Formula: one keystroke to move, one to change, and . to repeat.', 's deletes the character under the cursor and enters insert mode (substitute char).', 'S deletes the entire line and enters insert mode (substitute line).'], exercise: 'Add a semicolon to the end of 5 lines using A;<Esc>, then use j. to repeat on the remaining lines.' },
+    3: { title: 'Replace Mode', desc: 'Overwrite existing text continuously.', tips: ['R enters Replace mode \u2014 like Insert but overwrites.', 'Use Replace mode when you want to overwrite a fixed-width block of text.'], exercise: 'Enter Replace mode with R and overwrite an entire word. Compare how it feels versus deleting and retyping.' },
+    4: { title: 'Repeat & Complex', desc: 'Master the dot command and compound edits.', tips: ['The dot command is the most powerful command in Vim \u2014 it repeats the last change.', 'The Dot Formula: one keystroke to move, one to change, and . to repeat.', 's deletes the character under the cursor and enters insert mode (substitute char).', 'S deletes the entire line and enters insert mode (substitute line).'], exercise: 'Add a semicolon to the end of 5 lines using A;<Esc>, then use j. to repeat on the remaining lines.' },
   },
   operators: {
-    1: { title: 'Basic Operators', desc: 'The three core operators: delete, change, yank.', tips: ['Tip 12: d = delete, c = change (delete + insert), y = yank.', 'All three require a motion afterward to define the range.', 'Doubling them acts on the line: dd, cc, yy.'], exercise: 'On a single line, use dw to delete a word, cw to change a word, and yw to yank a word. Observe how each behaves.' },
+    1: { title: 'Basic Operators', desc: 'The three core operators: delete, change, yank.', tips: ['d = delete, c = change (delete + insert), y = yank.', 'All three require a motion afterward to define the range.', 'Doubling them acts on the line: dd, cc, yy.'], exercise: 'On a single line, use dw to delete a word, cw to change a word, and yw to yank a word. Observe how each behaves.' },
     2: { title: 'Format & Case', desc: 'Auto-indent and change case.', tips: ['= auto-formats/indents code (e.g., =ap to format a paragraph, gg=G for the whole file).', '~ toggles case; gU makes uppercase; gu makes lowercase.', 'gU{motion} is a normal-mode operator \u2014 gUiw uppercases the inner word.'], exercise: 'Select a block of code and press = to auto-indent it. Use ~, gU, and gu to experiment with case changes.' },
     3: { title: 'Indent', desc: 'Shift text left or right.', tips: ['> indents right; < unindents left.', '>> indents the current line; << unindents.', 'In Visual mode, > and < indent the selection.'], exercise: 'Select several lines in Visual mode and use > to indent them. Use < to unindent.' },
     4: { title: 'Advanced Operators', desc: 'Combine operators with text objects for surgical precision.', tips: ['Operators + text objects = Vim superpower.', 'ci" changes inside quotes (delete contents + insert).', 'ya{ yanks around braces (includes the braces).', 'Any operator works with any text object or motion!'], exercise: 'Take a function with quoted strings and braces. Use ci" to change a string, ya{ to yank the whole function block.' },
   },
   'delete': {
     1: { title: 'Char & Line Deletion', desc: 'Remove individual characters and whole lines.', tips: ['x and X delete single characters.', 'dd deletes the current line (duplicate the operator to act on the line).', 'D deletes from cursor to end of line.'], exercise: 'Delete 3 consecutive lines with dd. Use x to clean up stray characters, and D to truncate a line from the cursor.' },
-    2: { title: 'Delete Operator', desc: 'd is an operator \u2014 combine it with any motion to delete precisely.', tips: ['Tip 12: d{motion} deletes from cursor to the target.', 'Examples: dw deletes to next word, db deletes to previous word, d$ deletes to EOL.', 'Tip 11: Sometimes dw.dw is better than d2w because it\'s repeatable with .'], exercise: 'Practice dw, db, de, and d$ on a paragraph. Notice how each motion defines a different deletion range.' },
-    3: { title: 'Delete with Text Objects', desc: 'Delete inside or around structured text.', tips: ['Tip 53: di" deletes inside quotes; da" deletes around quotes (includes the quotes).', 'diw deletes inside word; daw deletes around word (includes surrounding space).', 'dit deletes inside HTML/XML tags.', 'Text objects work with c and y too!'], exercise: 'Find some quoted text. Try di" to delete inside quotes, then da" to delete including the quotes. Repeat with parentheses.' },
+    2: { title: 'Delete Operator', desc: 'd is an operator \u2014 combine it with any motion to delete precisely.', tips: ['d{motion} deletes from cursor to the target.', 'Examples: dw deletes to next word, db deletes to previous word, d$ deletes to EOL.', 'Sometimes dw.dw is better than d2w because it\'s repeatable with .'], exercise: 'Practice dw, db, de, and d$ on a paragraph. Notice how each motion defines a different deletion range.' },
+    3: { title: 'Delete with Text Objects', desc: 'Delete inside or around structured text.', tips: ['di" deletes inside quotes; da" deletes around quotes (includes the quotes).', 'diw deletes inside word; daw deletes around word (includes surrounding space).', 'dit deletes inside HTML/XML tags.', 'Text objects work with c and y too!'], exercise: 'Find some quoted text. Try di" to delete inside quotes, then da" to delete including the quotes. Repeat with parentheses.' },
     4: { title: 'Advanced Deletion', desc: 'Delete larger structures and to specific characters.', tips: ['dap deletes around paragraph.', 'dt{char} deletes up to (but not including) a character.', 'df{char} deletes up to and including a character.'], exercise: 'Delete an entire paragraph with dap. Use dt{char} to delete up to a specific punctuation mark without deleting the mark itself.' },
   },
   'copy-paste': {
-    1: { title: 'Yank & Put', desc: 'Copy and paste the Vim way.', tips: ['Tip 60: y yanks (copies); p puts (pastes) after cursor; P puts before.', 'yw yanks a word; yy yanks a line.', 'xp transposes two characters (delete+paste).'], exercise: 'Yank a word with yw, move elsewhere, and paste with p. Then yank a line with yy and paste it above with P.' },
-    2: { title: 'Registers', desc: 'Use named registers to hold multiple clipboards.', tips: ['Tip 61: "{reg} specifies a register. "ayiw yanks inner word to register a.', '"ap pastes from register a.', 'The 0 register holds the last yank, even if you delete after it.'], exercise: 'Yank two different words into registers a and b. Paste each one in different locations with "ap and "bp.' },
+    1: { title: 'Yank & Put', desc: 'Copy and paste the Vim way.', tips: ['y yanks (copies); p puts (pastes) after cursor; P puts before.', 'yw yanks a word; yy yanks a line.', 'xp transposes two characters (delete+paste).'], exercise: 'Yank a word with yw, move elsewhere, and paste with p. Then yank a line with yy and paste it above with P.' },
+    2: { title: 'Registers', desc: 'Use named registers to hold multiple clipboards.', tips: ['"{reg} specifies a register. "ayiw yanks inner word to register a.', '"ap pastes from register a.', 'The 0 register holds the last yank, even if you delete after it.'], exercise: 'Yank two different words into registers a and b. Paste each one in different locations with "ap and "bp.' },
     3: { title: 'Line-wise Paste', desc: 'Handle line-wise and character-wise text correctly.', tips: ['Y yanks the whole line (like yy).', 'gp/gP paste like p/P but leave the cursor after the new text.', ']p and [p paste with automatic indentation adjustment.'], exercise: 'Yank multiple lines with Y, then paste with gp. Notice how the cursor ends up after the pasted text.' },
-    4: { title: 'Advanced Paste', desc: 'Paste from system clipboard and special registers.', tips: ['"+ accesses the system clipboard.', '"* accesses the primary selection (X11).', 'Tip 64: :set paste prevents Vim from reformatting pasted text.'], exercise: 'Copy text to the system clipboard with "+y. Paste it into another application to verify.' },
+    4: { title: 'Advanced Paste', desc: 'Paste from system clipboard and special registers.', tips: ['"+ accesses the system clipboard.', '"* accesses the primary selection (X11).', ':set paste prevents Vim from reformatting pasted text.'], exercise: 'Copy text to the system clipboard with "+y. Paste it into another application to verify.' },
   },
   search: {
-    1: { title: 'Basic Search', desc: 'Find text and navigate between matches.', tips: ['Tip 80: / searches forward; ? searches backward; n/N repeat.', 'Press Enter to execute the search; Escape to cancel.', 'Enable :set hlsearch to highlight all matches.'], exercise: 'Search for a common word in a file with /. Use n and N to jump between matches. Try ? to search in reverse.' },
+    1: { title: 'Basic Search', desc: 'Find text and navigate between matches.', tips: ['/ searches forward; ? searches backward; n/N repeat.', 'Press Enter to execute the search; Escape to cancel.', 'Enable :set hlsearch to highlight all matches.'], exercise: 'Search for a common word in a file with /. Use n and N to jump between matches. Try ? to search in reverse.' },
     2: { title: 'Word Search', desc: 'Search for the word under the cursor instantly.', tips: ['* searches forward for the word under cursor; # searches backward.', 'These are motions \u2014 you can operate on them: c* changes the next occurrence of the word.'], exercise: 'Place the cursor on a variable name and press * to find all occurrences. Use n/N to navigate, then c* to change the next one.' },
     3: { title: 'Substitute', desc: 'Find and replace with :s and repeat with &.', tips: ['& repeats the last :substitute on the current line.', 'g& repeats the last substitution on all lines.'], exercise: 'Run a substitution with :%s/old/new/g. Press & to repeat it on another line.' },
-    4: { title: 'Advanced Search', desc: 'Operate on matches and refine patterns.', tips: ['Tip 84: gn selects the next search match as a motion \u2014 dgn deletes the next match.', 'Tip 82: :set incsearch shows matches as you type.', 'Tip 91: Leave the search field of :s blank to reuse the last search pattern.'], exercise: 'Search for a word, then use cgn to change the next match. Press . to repeat on subsequent matches.' },
+    4: { title: 'Advanced Search', desc: 'Operate on matches and refine patterns.', tips: ['gn selects the next search match as a motion \u2014 dgn deletes the next match.', ':set incsearch shows matches as you type.', 'Leave the search field of :s blank to reuse the last search pattern.'], exercise: 'Search for a word, then use cgn to change the next match. Press . to repeat on subsequent matches.' },
   },
   marks: {
-    1: { title: 'Set & Jump', desc: 'Bookmarks within a file.', tips: ['Tip 54: m{letter} sets a mark (a-z for local).', '\'{letter} jumps to the line of the mark.', '`{letter} jumps to the exact position.', 'mm is a common choice for a temporary mark.'], exercise: 'Set a mark with mm, scroll away, then jump back with `m. Set another mark and practice switching between them.' },
+    1: { title: 'Set & Jump', desc: 'Bookmarks within a file.', tips: ['m{letter} sets a mark (a-z for local).', '\'{letter} jumps to the line of the mark.', '`{letter} jumps to the exact position.', 'mm is a common choice for a temporary mark.'], exercise: 'Set a mark with mm, scroll away, then jump back with `m. Set another mark and practice switching between them.' },
     2: { title: 'Global Marks', desc: 'Bookmarks that work across files.', tips: ['m{A-Z} sets a global mark.', '`{A-Z} jumps to that mark even in another file.', 'Perfect for snapping between files while exploring code.'], exercise: 'Set a global mark with mA in one file, open another file, then jump back with `A.' },
     3: { title: 'Special Marks', desc: 'Vim automatically maintains special marks.', tips: ['`. jumps to the position of the last change.', '`^ jumps to the position of the last insert.', '`` jumps back to the position before the last jump.', '`[ and `] mark the start/end of the last change.'], exercise: 'Make an edit, then use `. to jump back to where the change happened. Use `` to return to where you were before the jump.' },
   },
   macros: {
-    1: { title: 'Record & Play', desc: 'Automate repetitive edits.', tips: ['Tip 65: q{reg} starts recording; q stops.', '@{reg} plays the macro; @@ repeats the last @.', 'Record one unit of work on a single line, then replay.'], exercise: 'Record a macro in register a that adds a bullet point at the start of a line (qa I- <Esc> j q). Play it with @a on the next line.' },
-    2: { title: 'Append & Edit', desc: 'Fix and extend recorded macros.', tips: ['Tip 69: qA appends to macro in register a (capital letter = append).', 'To edit a macro: paste it with "ap, edit, then yank back with "ay$.'], exercise: 'Record a macro, then realize you missed a step. Use qA to append the missing command to the existing macro.' },
-    3: { title: 'Count & Series', desc: 'Run macros multiple times and across files.', tips: ['Tip 67: Record a cheap macro and play it with a count: 10@a.', 'Tip 70: Use :argdo normal @a to run a macro across a file collection.', 'Tip 71: Use the expression register to increment counters in macros.'], exercise: 'Record a macro and play it 5 times with 5@a. Observe how it behaves on each line.' },
+    1: { title: 'Record & Play', desc: 'Automate repetitive edits.', tips: ['q{reg} starts recording; q stops.', '@{reg} plays the macro; @@ repeats the last @.', 'Record one unit of work on a single line, then replay.'], exercise: 'Record a macro in register a that adds a bullet point at the start of a line (qa I- <Esc> j q). Play it with @a on the next line.' },
+    2: { title: 'Append & Edit', desc: 'Fix and extend recorded macros.', tips: ['qA appends to macro in register a (capital letter = append).', 'To edit a macro: paste it with "ap, edit, then yank back with "ay$.'], exercise: 'Record a macro, then realize you missed a step. Use qA to append the missing command to the existing macro.' },
+    3: { title: 'Count & Series', desc: 'Run macros multiple times and across files.', tips: ['Record a cheap macro and play it with a count: 10@a.', 'Use :argdo normal @a to run a macro across a file collection.', 'Use the expression register to increment counters in macros.'], exercise: 'Record a macro and play it 5 times with 5@a. Observe how it behaves on each line.' },
   },
 };
 
@@ -1769,25 +1769,8 @@ function colorizeKeysInText(text) {
 }
 
 function renderRichText(text) {
-  var parts = [];
-  var tipRegex = /Tip\s+(\d+):/g;
-  var lastIndex = 0;
-  var match;
-  while ((match = tipRegex.exec(text)) !== null) {
-    var before = text.slice(lastIndex, match.index);
-    if (before) {
-      var colored = colorizeKeysInText(before);
-      for (var i = 0; i < colored.length; i++) parts.push(colored[i]);
-    }
-    parts.push(el('strong', { className: 'tip-highlight' }, 'Tip ' + match[1] + ':'));
-    lastIndex = tipRegex.lastIndex;
-  }
-  var after = text.slice(lastIndex);
-  if (after) {
-    var colored = colorizeKeysInText(after);
-    for (var i = 0; i < colored.length; i++) parts.push(colored[i]);
-  }
-  return parts.length > 0 ? parts : [document.createTextNode(text)];
+  var colored = colorizeKeysInText(text);
+  return colored.length > 0 ? colored : [document.createTextNode(text)];
 }
 
 var $ = function(sel) { return document.querySelector(sel); };
@@ -2000,13 +1983,13 @@ function renderTips() {
     'Keys marked with \u2022 expect a character argument afterwards',
     'Operators can be doubled to act on the current line (dd, yy, cc)',
     'The Dot Formula: one keystroke to move, one to change, then . to repeat',
-    'Tip 11: Don\'t count if you can repeat (dw. is often better than d2w)',
-    'Tip 23: Prefer operators to visual commands when you want repeatability',
-    'Tip 48: Real lines vs display lines: j/k vs gj/gk, 0/$ vs g0/g$',
-    'Tip 61: Use registers ("a, "0) to hold multiple clipboards',
-    'Tip 80: Enable :set hlsearch and :set incsearch for better searching',
-    'Tip 84: gn operates on the next search match as a motion',
-    'Tip 90: Add c to :s for confirmation: :%s/old/new/gc',
+    'Don\'t count if you can repeat (dw. is often better than d2w)',
+    'Prefer operators to visual commands when you want repeatability',
+    'Real lines vs display lines: j/k vs gj/gk, 0/$ vs g0/g$',
+    'Use registers ("a, "0) to hold multiple clipboards',
+    'Enable :set hlsearch and :set incsearch for better searching',
+    'gn operates on the next search match as a motion',
+    'Add c to :s for confirmation: :%s/old/new/gc',
   ];
   tips.forEach(function(t) {
     cont.appendChild(el('div', { className: 'ref-row' }, [
