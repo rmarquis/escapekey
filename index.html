@@ -526,6 +526,51 @@ header .subtitle {
 }
 .ref-desc { color: var(--text-sub); }
 
+.tip-index-toggle {
+  display: block;
+  margin: 16px auto 8px;
+  padding: 8px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-sub);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.tip-index-toggle:hover {
+  background: var(--bg-key);
+  color: var(--text);
+}
+.tip-index-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+}
+.tip-index-section h3 {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+.tip-index-desc {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-bottom: 14px;
+}
+.tip-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 5px 14px;
+}
+.tip-index-grid .ref-row {
+  font-size: 0.76rem;
+}
+.tip-index-grid .ref-cmd {
+  min-width: 46px;
+  font-size: 0.75rem;
+}
+
 .credit {
   text-align: center;
   font-size: 0.72rem;
@@ -668,10 +713,13 @@ html[data-theme="light"] .key:active {
       <h3>Common Combos</h3>
       <div class="ref-list" id="combos"></div>
     </div>
-    <div class="ref-card">
-      <h3>Practical Vim</h3>
-      <div class="ref-list" id="practical-vim"></div>
-    </div>
+  </div>
+
+  <button class="tip-index-toggle" id="tip-index-toggle">Show Practical Vim Tips Index</button>
+  <div class="tip-index-section" id="tip-index-section" style="display:none;">
+    <h3>Practical Vim Tips Index</h3>
+    <p class="tip-index-desc">Every tip from <em>Practical Vim</em> referenced in this guide, mapped to the keys they relate to.</p>
+    <div class="tip-index-grid" id="practical-vim"></div>
   </div>
 
   <p class="credit" id="credit"></p>
@@ -1378,11 +1426,11 @@ var TIP_REFS = {
   '/': [80, 82, 83], 'n': [80, 84], '3': [80], '8': [80],
   'x': [9], 'u': [8], 'r': [19], '.': [1, 6],
   'd': [9, 12], 'c': [12], 'y': [12, 60],
-  'p': [60, 63], 'P': [63],
+  'p': [60, 63, 64], 'P': [63],
   'v': [20, 21, 23], 'V': [21],
   'q': [65, 69, 70], '2': [65, 67],
   'g': [52, 53, 58, 71],
-  '7': [88, 93],
+  '7': [88, 90, 91, 93],
   's': [3, 19], 'S': [19],
   'z': [5],
 };
@@ -2230,6 +2278,20 @@ function initEvents() {
       clearSelection();
     }
   });
+
+  var tipToggle = $('#tip-index-toggle');
+  if (tipToggle) {
+    tipToggle.addEventListener('click', function() {
+      var sec = $('#tip-index-section');
+      if (sec.style.display === 'none') {
+        sec.style.display = 'block';
+        tipToggle.textContent = 'Hide Practical Vim Tips Index';
+      } else {
+        sec.style.display = 'none';
+        tipToggle.textContent = 'Show Practical Vim Tips Index';
+      }
+    });
+  }
 }
 
 function saveState() {
