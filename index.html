@@ -478,6 +478,9 @@ header .subtitle {
   color: var(--cat-command);
   font-weight: 600;
 }
+.key-token {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+}
 
 /* === LEGEND & REFERENCE === */
 .reference {
@@ -1668,6 +1671,125 @@ function parseTip(text) {
   return parts.length > 0 ? parts : [document.createTextNode(text)];
 }
 
+var _lessonTokens = [];
+Object.keys(KEYS).forEach(function(k) {
+  if (k.length === 1 && KEYS[k].normal) _lessonTokens.push(k);
+});
+_lessonTokens = _lessonTokens.concat([
+  'dd','cc','yy','gg','d$','dw','db','de','cw','yw','dt','df',
+  'dap','di"','da"','dit','diw','daw','ci"','ya{','xp','gv',
+  'gU','gu','g&','gn','gN','<<','>>','g0','g^','gj','gk','ge',
+  'Ctrl-O','Ctrl-I','Ctrl-V','Ctrl-A','Ctrl-X','Ctrl-W','Ctrl-U',
+  '<Esc>','<CR>','<Tab>','<Space>','<Backspace>','<Enter>',
+  '<Insert>','<Delete>','<Up>','<Down>','<Left>','<Right>'
+]);
+// Add shifted single-char keys and multi-char key names from KEYS
+var _charToKey = {};
+var _nameToKey = { 'Backspace':'Backspace', 'Escape':'Escape' };
+Object.keys(KEYS).forEach(function(k) {
+  var data = KEYS[k];
+  if (data.normal) {
+    if (data.normal.char) _charToKey[data.normal.char] = k;
+    if (data.normal.char && data.normal.char.length > 1) _lessonTokens.push(data.normal.char);
+  }
+  if (data.shifted && data.shifted.char) {
+    _charToKey[data.shifted.char] = k;
+    if (data.shifted.char.length === 1) _lessonTokens.push(data.shifted.char);
+    else if (data.shifted.char.length > 1 && data.shifted.char !== data.normal.char) _lessonTokens.push(data.shifted.char);
+  }
+});
+// Add bare key names for text that spells them out (e.g. "Backspace moves left")
+['Backspace','Escape','Enter','Space','Delete','Insert','Tab','Home','End','PageUp','PageDown'].forEach(function(n){ _lessonTokens.push(n); });
+_lessonTokens.sort(function(a,b){return b.length-a.length;});
+var _lessonPattern = '(' + _lessonTokens.map(function(t){
+  return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}).join('|') + ')';
+
+function getTokenColor(token) {
+  if (token.charAt(0) === '<') {
+    var map = { '<Esc>':'Escape','<CR>':'Enter','<Tab>':'Tab','<Space>':'Space',
+      '<Backspace>':'Backspace','<Enter>':'Enter','<Insert>':'Insert',
+      '<Delete>':'Delete','<Up>':'Up','<Down>':'Down','<Left>':'Left','<Right>':'Right' };
+    var base = map[token];
+    if (!base && token.indexOf('<C-') === 0) return CAT_META.command ? CAT_META.command.color : null;
+    if (base) {
+      var d = KEYS[base];
+      if (d && d.normal) {
+        var c = CAT_META[d.normal.cat];
+        return c ? c.color : null;
+      }
+    }
+    return null;
+  }
+  var key = _charToKey[token] || _nameToKey[token] || token;
+  if (token.length > 1 && !_charToKey[token] && !_nameToKey[token]) {
+    if (/^([dcy><=])\1$/.test(token)) key = token[0];
+    else if (token === 'gg') key = 'g';
+    else key = token[0];
+  }
+  var d = KEYS[key];
+  if (d && d.normal) {
+    var c = CAT_META[d.normal.cat];
+    return c ? c.color : null;
+  }
+  return null;
+}
+
+function colorizeKeysInText(text) {
+  var parts = [];
+  var regex = new RegExp(_lessonPattern, 'g');
+  var lastIndex = 0;
+  var match;
+  try {
+    while ((match = regex.exec(text)) !== null) {
+      var prevChar = match.index > 0 ? text[match.index - 1] : '';
+      var nextChar = match.index + match[1].length < text.length ? text[match.index + match[1].length] : '';
+      var isStandalone = (!prevChar || /[^a-zA-Z0-9]/.test(prevChar)) && (!nextChar || /[^a-zA-Z0-9]/.test(nextChar));
+      var isArticleA = match[1] === 'a' && nextChar === ' ' && /[a-z]/.test(text[match.index + match[1].length + 1] || '');
+      if (isStandalone && !isArticleA) {
+        if (match.index > lastIndex) {
+          parts.push(document.createTextNode(text.slice(lastIndex, match.index)));
+        }
+        var color = getTokenColor(match[1]);
+        if (color) {
+          parts.push(el('span', { className: 'key-token', style: { color: color, fontWeight: 500 } }, match[1]));
+        } else {
+          parts.push(document.createTextNode(match[1]));
+        }
+        lastIndex = match.index + match[1].length;
+      }
+    }
+  } catch (e) {
+    return [document.createTextNode(text)];
+  }
+  if (lastIndex < text.length) {
+    parts.push(document.createTextNode(text.slice(lastIndex)));
+  }
+  return parts.length > 0 ? parts : [document.createTextNode(text)];
+}
+
+function renderRichText(text) {
+  var parts = [];
+  var tipRegex = /Tip\s+(\d+):/g;
+  var lastIndex = 0;
+  var match;
+  while ((match = tipRegex.exec(text)) !== null) {
+    var before = text.slice(lastIndex, match.index);
+    if (before) {
+      var colored = colorizeKeysInText(before);
+      for (var i = 0; i < colored.length; i++) parts.push(colored[i]);
+    }
+    parts.push(el('strong', { className: 'tip-highlight' }, 'Tip ' + match[1] + ':'));
+    lastIndex = tipRegex.lastIndex;
+  }
+  var after = text.slice(lastIndex);
+  if (after) {
+    var colored = colorizeKeysInText(after);
+    for (var i = 0; i < colored.length; i++) parts.push(colored[i]);
+  }
+  return parts.length > 0 ? parts : [document.createTextNode(text)];
+}
+
 var $ = function(sel) { return document.querySelector(sel); };
 var $$ = function(sel) { return document.querySelectorAll(sel); };
 
@@ -1888,7 +2010,7 @@ function renderTips() {
   ];
   tips.forEach(function(t) {
     cont.appendChild(el('div', { className: 'ref-row' }, [
-      el('span', { className: 'ref-desc' }, parseTip(t)),
+      el('span', { className: 'ref-desc' }, renderRichText(t)),
     ]));
   });
 }
@@ -2056,17 +2178,17 @@ function renderLesson() {
   if (catLessons) {
     var lesson = level === 99 ? null : catLessons[level];
     if (lesson) {
-      panel.appendChild(el('p', { className: 'lesson-desc' }, lesson.desc));
+      panel.appendChild(el('p', { className: 'lesson-desc' }, renderRichText(lesson.desc)));
       if (lesson.tips && lesson.tips.length > 0) {
         var tipsUl = el('ul', { className: 'lesson-tips' });
         lesson.tips.forEach(function(tip) {
-          tipsUl.appendChild(el('li', null, parseTip(tip)));
+          tipsUl.appendChild(el('li', null, renderRichText(tip)));
         });
         panel.appendChild(tipsUl);
       }
       if (lesson.exercise) {
         panel.appendChild(el('div', { className: 'lesson-section-title' }, 'Exercise'));
-        panel.appendChild(el('p', { className: 'lesson-desc', style: { fontStyle: 'italic', borderLeft: '2px solid var(--cat-extra)', paddingLeft: '8px' } }, lesson.exercise));
+        panel.appendChild(el('p', { className: 'lesson-desc', style: { fontStyle: 'italic', borderLeft: '2px solid var(--cat-extra)', paddingLeft: '8px' } }, renderRichText(lesson.exercise)));
       }
     } else if (level === 99) {
       panel.appendChild(el('p', { className: 'lesson-desc' }, 'Full reference \u2014 all keys in this category are shown.'));
