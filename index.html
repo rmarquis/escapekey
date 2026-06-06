@@ -1084,6 +1084,47 @@ var CTRL_COMMANDS = [
   { cmd: 'Ctrl+W q', desc: 'Close window' },
 ];
 
+var G_COMMANDS = [
+  { cmd: 'gg', desc: 'Go to top of file' },
+  { cmd: 'G', desc: 'Go to bottom / goto line' },
+  { cmd: 'gf', desc: 'Open file under cursor' },
+  { cmd: 'gF', desc: 'Open file under cursor at line' },
+  { cmd: 'g;', desc: 'Jump back in change list' },
+  { cmd: 'g,', desc: 'Jump forward in change list' },
+  { cmd: 'gU{motion}', desc: 'Make uppercase' },
+  { cmd: 'gu{motion}', desc: 'Make lowercase' },
+  { cmd: 'g~{motion}', desc: 'Toggle case' },
+  { cmd: 'gv', desc: 'Reselect last visual selection' },
+  { cmd: 'gn', desc: 'Select next search match' },
+  { cmd: 'gN', desc: 'Select previous search match' },
+];
+
+var Z_COMMANDS = [
+  { cmd: 'zt', desc: 'Scroll cursor to top' },
+  { cmd: 'zz', desc: 'Scroll cursor to center' },
+  { cmd: 'zb', desc: 'Scroll cursor to bottom' },
+  { cmd: 'za', desc: 'Toggle fold' },
+  { cmd: 'zc', desc: 'Close fold' },
+  { cmd: 'zo', desc: 'Open fold' },
+  { cmd: 'zR', desc: 'Open all folds' },
+  { cmd: 'zM', desc: 'Close all folds' },
+];
+
+var BRACKET_COMMANDS = [
+  { cmd: '[m', desc: 'Prev method start' },
+  { cmd: ']m', desc: 'Next method start' },
+  { cmd: '[M', desc: 'Prev method end' },
+  { cmd: ']M', desc: 'Next method end' },
+  { cmd: '[{', desc: 'Prev unmatched {' },
+  { cmd: ']}', desc: 'Next unmatched }' },
+  { cmd: '[(', desc: 'Prev unmatched (' },
+  { cmd: '])', desc: 'Next unmatched )' },
+  { cmd: '[s', desc: 'Prev spelling error' },
+  { cmd: ']s', desc: 'Next spelling error' },
+  { cmd: '[c', desc: 'Prev diff change' },
+  { cmd: ']c', desc: 'Next diff change' },
+];
+
 var CAT_META = {
   motion:   { label: 'Motion',   color: 'var(--cat-motion)',   desc: 'Moves the cursor or defines range for an operator' },
   command:  { label: 'Command',  color: 'var(--cat-command)',  desc: 'Direct action command' },
@@ -1447,6 +1488,7 @@ function renderFilters() {
       btn.classList.add('active');
       renderLevelBar();
       updateDisplay();
+      saveState();
     });
     cont.appendChild(btn);
   });
@@ -1470,6 +1512,7 @@ function renderLevelBar() {
         state.activeLevel = level;
         renderLevelBar();
         updateDisplay();
+        saveState();
       });
       btns.appendChild(btn);
     })(i);
@@ -1479,6 +1522,7 @@ function renderLevelBar() {
     state.activeLevel = 99;
     renderLevelBar();
     updateDisplay();
+    saveState();
   });
   btns.appendChild(fullBtn);
   bar.appendChild(btns);
@@ -1650,7 +1694,19 @@ function renderLesson() {
   var level = state.activeLevel;
 
   if (tag === 'all') {
-    panel.appendChild(el('div', { className: 'lesson-empty' }, 'Select a category to see its lesson keys.'));
+    panel.appendChild(el('h3', null, 'Welcome'));
+    panel.appendChild(el('p', { className: 'lesson-desc' }, 'This is a progressive Vim tutorial. Pick a category above and work through the levels from 1 upward. Each level introduces new keys with tips and hands-on exercises.'));
+    panel.appendChild(el('div', { className: 'lesson-section-title' }, 'Suggested Path'));
+    var path = el('ul', { className: 'lesson-tips' });
+    ['Start with Moving to learn navigation without arrow keys.',
+     'Next, Modes shows how to enter and exit Insert mode.',
+     'Then Actions covers basic edits, undo, and the dot command.',
+     'Operators teaches delete, change, and yank combined with motions.',
+     'Delete and Copy/Paste dive deeper into specific workflows.',
+     'Finally, Search, Marks, and Macros unlock advanced efficiency.'].forEach(function(s) {
+      path.appendChild(el('li', null, s));
+    });
+    panel.appendChild(path);
     return;
   }
 
@@ -1785,6 +1841,45 @@ function renderDetail(keyId) {
     body.appendChild(capsSection);
   }
 
+  if (keyId === 'g') {
+    var gSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Common g commands')]);
+    var gUl = el('ul');
+    G_COMMANDS.forEach(function(c) {
+      gUl.appendChild(el('li', null, [
+        el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-extra)' } }, c.cmd),
+        document.createTextNode(' \u2014 ' + c.desc),
+      ]));
+    });
+    gSection.appendChild(gUl);
+    body.appendChild(gSection);
+  }
+
+  if (keyId === 'z') {
+    var zSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Common z commands')]);
+    var zUl = el('ul');
+    Z_COMMANDS.forEach(function(c) {
+      zUl.appendChild(el('li', null, [
+        el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-extra)' } }, c.cmd),
+        document.createTextNode(' \u2014 ' + c.desc),
+      ]));
+    });
+    zSection.appendChild(zUl);
+    body.appendChild(zSection);
+  }
+
+  if (keyId === '[' || keyId === ']') {
+    var bSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Bracket navigation')]);
+    var bUl = el('ul');
+    BRACKET_COMMANDS.forEach(function(c) {
+      bUl.appendChild(el('li', null, [
+        el('span', { style: { fontFamily: 'monospace', color: 'var(--cat-extra)' } }, c.cmd),
+        document.createTextNode(' \u2014 ' + c.desc),
+      ]));
+    });
+    bSection.appendChild(bUl);
+    body.appendChild(bSection);
+  }
+
   if (primary.cat === 'operator') {
     var toSection = el('div', { className: 'detail-section' }, [el('h4', null, 'Works with text objects')]);
     var ul = el('ul');
@@ -1860,6 +1955,7 @@ function initEvents() {
     });
     renderLevelBar();
     updateDisplay();
+    saveState();
   }
 
   function adjustLevel(delta) {
@@ -1876,6 +1972,7 @@ function initEvents() {
     state.activeLevel = steps[nextIdx];
     renderLevelBar();
     updateDisplay();
+    saveState();
   }
 
   document.addEventListener('keydown', function(e) {
@@ -1953,8 +2050,34 @@ function initEvents() {
   });
 }
 
+function saveState() {
+  try {
+    localStorage.setItem('vim-cheat-filter', state.activeFilter);
+    localStorage.setItem('vim-cheat-level', String(state.activeLevel));
+  } catch (e) {}
+}
+
+function loadState() {
+  try {
+    var savedFilter = localStorage.getItem('vim-cheat-filter');
+    var savedLevel = localStorage.getItem('vim-cheat-level');
+    if (savedFilter) {
+      var idx = FILTERS.findIndex(function(f) { return f.id === savedFilter; });
+      if (idx >= 0) {
+        state.activeFilter = savedFilter;
+        state.activeLevel = savedLevel ? parseInt(savedLevel, 10) : 99;
+        var def = LEVEL_DEFS[state.activeFilter];
+        if (def && (state.activeLevel < 1 || state.activeLevel > def.max)) {
+          state.activeLevel = 1;
+        }
+      }
+    }
+  } catch (e) {}
+}
+
 // INIT
 function init() {
+  loadState();
   renderKeyboard();
   renderFilters();
   renderLegend();
