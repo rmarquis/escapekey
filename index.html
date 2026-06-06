@@ -462,7 +462,7 @@ header .subtitle {
 .reference {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
 }
 .ref-card {
@@ -625,6 +625,10 @@ html[data-theme="light"] .key:active {
     <div class="ref-card">
       <h3>Tips</h3>
       <div class="ref-list" id="tips"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Text Objects</h3>
+      <div class="ref-list" id="text-objects"></div>
     </div>
   </div>
 
@@ -1482,6 +1486,17 @@ function renderRefList(containerId, items) {
   });
 }
 
+function renderTextObjects() {
+  var cont = document.getElementById('text-objects');
+  TEXT_OBJECTS.forEach(function(to) {
+    var row = el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-cmd' }, to.keys),
+      el('span', { className: 'ref-desc' }, to.label),
+    ]);
+    cont.appendChild(row);
+  });
+}
+
 function renderTips() {
   var cont = document.getElementById('tips');
   var tips = [
@@ -1905,6 +1920,7 @@ function init() {
   renderLegend();
   renderRefList('ex-cmds', EX_COMMANDS);
   renderRefList('ctrl-cmds', CTRL_COMMANDS);
+  renderTextObjects();
   renderTips();
   renderCredit();
   renderDetailPlaceholder();
