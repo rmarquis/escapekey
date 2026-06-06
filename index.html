@@ -630,6 +630,14 @@ html[data-theme="light"] .key:active {
       <h3>Text Objects</h3>
       <div class="ref-list" id="text-objects"></div>
     </div>
+    <div class="ref-card">
+      <h3>Useful Settings</h3>
+      <div class="ref-list" id="settings"></div>
+    </div>
+    <div class="ref-card">
+      <h3>Common Combos</h3>
+      <div class="ref-list" id="combos"></div>
+    </div>
   </div>
 
   <p class="credit" id="credit"></p>
@@ -1125,6 +1133,36 @@ var BRACKET_COMMANDS = [
   { cmd: ']c', desc: 'Next diff change' },
 ];
 
+var COMBOS = [
+  { cmd: 'dw / d$ / dd', desc: 'Delete word / to EOL / line' },
+  { cmd: 'cw / ci" / caw', desc: 'Change word / inside quotes / around word' },
+  { cmd: 'yw / yy / yG', desc: 'Yank word / line / to EOF' },
+  { cmd: '>ap / =G / gUiw', desc: 'Indent paragraph / format file / uppercase word' },
+  { cmd: 'dt. / df,', desc: 'Delete up to / through a char' },
+  { cmd: 'xp / ddp', desc: 'Transpose chars / lines' },
+  { cmd: 'J / gJ', desc: 'Join lines / join without space' },
+  { cmd: 'gf / gF', desc: 'Open file under cursor / at line' },
+  { cmd: 'gg=G', desc: 'Auto-indent entire file' },
+  { cmd: 'vU / vu', desc: 'Uppercase / lowercase selection' },
+];
+
+var SETTINGS = [
+  { cmd: 'set number', desc: 'Show line numbers' },
+  { cmd: 'set relativenumber', desc: 'Relative line numbers' },
+  { cmd: 'set hlsearch', desc: 'Highlight search matches' },
+  { cmd: 'set incsearch', desc: 'Show matches while typing' },
+  { cmd: 'set ignorecase', desc: 'Case-insensitive search' },
+  { cmd: 'set smartcase', desc: 'Case-sensitive if uppercase used' },
+  { cmd: 'set hidden', desc: 'Allow hidden modified buffers' },
+  { cmd: 'set clipboard=unnamedplus', desc: 'Use system clipboard' },
+  { cmd: 'set mouse=a', desc: 'Enable mouse in all modes' },
+  { cmd: 'set expandtab', desc: 'Use spaces instead of tabs' },
+  { cmd: 'set shiftwidth=2', desc: 'Indent width' },
+  { cmd: 'set scrolloff=8', desc: 'Keep 8 lines above/below cursor' },
+  { cmd: 'set undofile', desc: 'Persistent undo across sessions' },
+  { cmd: 'set termguicolors', desc: 'True color support' },
+];
+
 var CAT_META = {
   motion:   { label: 'Motion',   color: 'var(--cat-motion)',   desc: 'Moves the cursor or defines range for an operator' },
   command:  { label: 'Command',  color: 'var(--cat-command)',  desc: 'Direct action command' },
@@ -1560,6 +1598,28 @@ function renderTextObjects() {
     var row = el('div', { className: 'ref-row' }, [
       el('span', { className: 'ref-cmd' }, to.keys),
       el('span', { className: 'ref-desc' }, to.label),
+    ]);
+    cont.appendChild(row);
+  });
+}
+
+function renderSettings() {
+  var cont = document.getElementById('settings');
+  SETTINGS.forEach(function(s) {
+    var row = el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-cmd' }, s.cmd),
+      el('span', { className: 'ref-desc' }, s.desc),
+    ]);
+    cont.appendChild(row);
+  });
+}
+
+function renderCombos() {
+  var cont = document.getElementById('combos');
+  COMBOS.forEach(function(c) {
+    var row = el('div', { className: 'ref-row' }, [
+      el('span', { className: 'ref-cmd' }, c.cmd),
+      el('span', { className: 'ref-desc' }, c.desc),
     ]);
     cont.appendChild(row);
   });
@@ -2084,6 +2144,8 @@ function init() {
   renderRefList('ex-cmds', EX_COMMANDS);
   renderRefList('ctrl-cmds', CTRL_COMMANDS);
   renderTextObjects();
+  renderSettings();
+  renderCombos();
   renderTips();
   renderCredit();
   renderDetailPlaceholder();
