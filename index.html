@@ -682,7 +682,7 @@ var KEYS = {
   '7': {
     normal:  { char: '7', label: 'count',         cat: 'count',   tags: [] },
     shifted: { char: '&', label: 'repeat :s',     cat: 'command', tags: ['actions', 'search'] },
-    notes: [2],
+    notes: [2, 12],
   },
   '8': {
     normal:  { char: '8', label: 'count',         cat: 'count',   tags: [] },
@@ -712,7 +712,7 @@ var KEYS = {
   'q': {
     normal:  { char: 'q', label: 'record macro',  cat: 'extra',   tags: ['macros'], dot: true },
     shifted: { char: 'Q', label: 'ex mode',       cat: 'command', tags: ['modes'] },
-    notes: [],
+    notes: [15],
   },
   'w': {
     normal:  { char: 'w', label: 'next word',     cat: 'motion',  tags: ['moving'] },
@@ -727,7 +727,7 @@ var KEYS = {
   'r': {
     normal:  { char: 'r', label: 'replace char',  cat: 'extra',   tags: ['actions'], dot: true },
     shifted: { char: 'R', label: 'replace mode',  cat: 'insert',  tags: ['modes', 'actions'] },
-    notes: [],
+    notes: [21],
   },
   't': {
     normal:  { char: 't', label: "'till",         cat: 'extra',   tags: ['moving'], dot: true },
@@ -742,7 +742,7 @@ var KEYS = {
   'u': {
     normal:  { char: 'u', label: 'undo',          cat: 'command',  tags: ['actions'] },
     shifted: { char: 'U', label: 'undo line',     cat: 'command',  tags: ['actions'] },
-    notes: [],
+    notes: [19],
   },
   'i': {
     normal:  { char: 'i', label: 'insert mode',   cat: 'insert',  tags: ['modes'] },
@@ -797,7 +797,7 @@ var KEYS = {
   'g': {
     normal:  { char: 'g', label: 'extra cmds',    cat: 'extra',   tags: ['moving'], dot: true },
     shifted: { char: 'G', label: 'eof / goto ln', cat: 'extra',   tags: ['moving'], dot: true },
-    notes: [6],
+    notes: [6, 23],
   },
   'h': {
     normal:  { char: 'h', label: 'left',          cat: 'motion',  tags: ['moving'] },
@@ -832,7 +832,7 @@ var KEYS = {
   'z': {
     normal:  { char: 'z', label: 'extra cmds',    cat: 'extra',   tags: [], dot: true },
     shifted: { char: 'Z', label: 'quit',          cat: 'extra',   tags: [], dot: true },
-    notes: [4, 5],
+    notes: [4, 5, 24],
   },
   'x': {
     normal:  { char: 'x', label: 'delete char',   cat: 'command',  tags: ['delete', 'actions'] },
@@ -847,7 +847,7 @@ var KEYS = {
   'v': {
     normal:  { char: 'v', label: 'visual mode',   cat: 'command',  tags: ['modes'] },
     shifted: { char: 'V', label: 'visual lines',  cat: 'command',  tags: ['modes'] },
-    notes: [],
+    notes: [9, 25],
   },
   'b': {
     normal:  { char: 'b', label: 'back word',     cat: 'motion',  tags: ['moving'] },
@@ -857,7 +857,7 @@ var KEYS = {
   'n': {
     normal:  { char: 'n', label: 'next find',     cat: 'motion',  tags: ['search', 'moving'] },
     shifted: { char: 'N', label: 'prev find',     cat: 'motion',  tags: ['search', 'moving'] },
-    notes: [],
+    notes: [17],
   },
   'm': {
     normal:  { char: 'm', label: 'set mark',      cat: 'extra',   tags: ['marks'], dot: true },
@@ -872,12 +872,12 @@ var KEYS = {
   '.': {
     normal:  { char: '.', label: 'repeat cmd',    cat: 'command',  tags: ['actions'] },
     shifted: { char: '>', label: 'indent',        cat: 'operator', tags: ['operators'] },
-    notes: [3],
+    notes: [3, 7],
   },
   '/': {
     normal:  { char: '/', label: 'find',          cat: 'extra',   tags: ['search'], dot: true },
     shifted: { char: '?', label: 'find reverse',  cat: 'extra',   tags: ['search'], dot: true },
-    notes: [],
+    notes: [16],
   },
   'Tab': {
     normal:  { char: 'Tab', label: 'jump fwd',    cat: 'motion',  tags: ['moving'] },
@@ -1012,6 +1012,11 @@ var NOTES = {
   18: 'gp and gP paste like p/P but leave the cursor AFTER the new text. ]p and [p paste with indentation adjusted to the target.',
   19: 'Vim maintains an undo tree, not just a linear history. Use g- and g+ to traverse branches of changes.',
   20: 'The quickfix list collects locations across files. :cnext/:cprev navigate; :colder/:cnewer recall previous lists.',
+  21: 'Replace mode (R) overwrites existing text continuously. gr replaces a character without affecting tab/space layout.',
+  22: 'Window commands: Ctrl-W s splits horizontally, Ctrl-W v vertically, Ctrl-W w cycles, Ctrl-W q closes.',
+  23: 'Jumps: gf opens file under cursor; gF opens at line number; Ctrl-] jumps to tag definition.',
+  24: 'Folding: za toggles, zc closes, zo opens, zR opens all, zM closes all folds.',
+  25: 'gv reselects the last Visual selection. Useful for repeating visual operations or refining a selection.',
 };
 
 var TEXT_OBJECTS = [
