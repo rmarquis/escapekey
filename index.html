@@ -2268,7 +2268,7 @@ function renderDetail(keyId) {
   if (tipNums && tipNums.length > 0) {
     var tipDiv = el('div', { className: 'note-ref' }, [
       el('strong', null, 'Practical Vim: '),
-      document.createTextNode('Tips ' + tipNums.join(', ')),
+      el('strong', { className: 'tip-highlight' }, 'Tips ' + tipNums.join(', ')),
     ]);
     panel.appendChild(tipDiv);
   }
