@@ -592,6 +592,18 @@ html[data-theme="light"] .key:active {
   .bottom-panels { flex-direction: column; }
   .reference { grid-template-columns: 1fr; }
 }
+
+@media print {
+  body { background: #fff; color: #000; }
+  .keyboard { background: #f5f5f5; border: 1px solid #ccc; }
+  .key { background: #fff; border-bottom-color: #999; box-shadow: none; }
+  .key:hover { transform: none; }
+  .controls, .shift-toggle, .theme-toggle, .kb-esc-search { display: none; }
+  .reference { grid-template-columns: 1fr 1fr; }
+  .ref-card { background: #fff; border: 1px solid #ccc; }
+  .bottom-panels { flex-direction: row; }
+  .lesson-panel, .detail-panel { background: #fff; border: 1px solid #ccc; }
+}
 </style>
 </head>
 <body>
@@ -1755,7 +1767,7 @@ function renderLesson() {
 
   if (tag === 'all') {
     panel.appendChild(el('h3', null, 'Welcome'));
-    panel.appendChild(el('p', { className: 'lesson-desc' }, 'This is a progressive Vim tutorial. Pick a category above and work through the levels from 1 upward. Each level introduces new keys with tips and hands-on exercises.'));
+    panel.appendChild(el('p', { className: 'lesson-desc' }, 'This is a progressive Vim tutorial. Pick a category above and work through the levels from 1 upward. Each level introduces new keys with tips and hands-on exercises. New to Vim? Run vimtutor in your terminal for a guided 30-minute introduction.'));
     panel.appendChild(el('div', { className: 'lesson-section-title' }, 'Suggested Path'));
     var path = el('ul', { className: 'lesson-tips' });
     ['Start with Moving to learn navigation without arrow keys.',
