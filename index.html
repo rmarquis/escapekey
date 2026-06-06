@@ -1425,10 +1425,10 @@ var LESSONS = {
     4: { title: 'Advanced Paste', desc: 'Paste from system clipboard and special registers.', tips: ['"+ accesses the system clipboard.', '"* accesses the primary selection (X11).', ':set paste prevents Vim from reformatting pasted text.'], exercise: 'Copy text to the system clipboard with "+y. Paste it into another application to verify.' },
   },
   search: {
-    1: { title: 'Basic Search', desc: 'Find text and navigate between matches.', tips: ['/ searches forward; ? searches backward; n/N repeat.', 'Press Enter to execute the search; Escape to cancel.', 'Enable :set hlsearch to highlight all matches.'], exercise: 'Search for a common word in a file with /. Use n and N to jump between matches. Try ? to search in reverse.' },
+    1: { title: 'Basic Search', desc: 'Find text and navigate between matches.', tips: ['/ searches forward; ? searches backward; n/N repeat.', 'Press Enter to execute the search; Escape to cancel.'], exercise: 'Search for a common word in a file with /. Use n and N to jump between matches. Try ? to search in reverse.' },
     2: { title: 'Word Search', desc: 'Search for the word under the cursor instantly.', tips: ['* searches forward for the word under cursor; # searches backward.', 'These are motions \u2014 you can operate on them: c* changes the next occurrence of the word.'], exercise: 'Place the cursor on a variable name and press * to find all occurrences. Use n/N to navigate, then c* to change the next one.' },
     3: { title: 'Substitute', desc: 'Find and replace with :s and repeat with &.', tips: ['& repeats the last :substitute on the current line.', 'g& repeats the last substitution on all lines.'], exercise: 'Run a substitution with :%s/old/new/g. Press & to repeat it on another line.' },
-    4: { title: 'Advanced Search', desc: 'Operate on matches and refine patterns.', tips: ['gn selects the next search match as a motion \u2014 dgn deletes the next match.', ':set incsearch shows matches as you type.', 'Leave the search field of :s blank to reuse the last search pattern.'], exercise: 'Search for a word, then use cgn to change the next match. Press . to repeat on subsequent matches.' },
+    4: { title: 'Advanced Search', desc: 'Operate on matches and refine patterns.', tips: ['gn selects the next search match as a motion \u2014 dgn deletes the next match.', 'Leave the search field of :s blank to reuse the last search pattern.'], exercise: 'Search for a word, then use cgn to change the next match. Press . to repeat on subsequent matches.' },
   },
   marks: {
     1: { title: 'Set & Jump', desc: 'Bookmarks within a file.', tips: ['m{letter} sets a mark (a-z for local).', '\'{letter} jumps to the line of the mark.', '`{letter} jumps to the exact position.', 'mm is a common choice for a temporary mark.'], exercise: 'Set a mark with mm, scroll away, then jump back with `m. Set another mark and practice switching between them.' },
@@ -2002,7 +2002,6 @@ function renderTips() {
     'Prefer operators to visual commands when you want repeatability',
     'Real lines vs display lines: j/k vs gj/gk, 0/$ vs g0/g$',
     'Use registers ("a, "0) to hold multiple clipboards',
-    'Enable :set hlsearch and :set incsearch for better searching',
     'gn operates on the next search match as a motion',
     'Add c to :s for confirmation: :%s/old/new/gc',
   ];
