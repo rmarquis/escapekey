@@ -339,6 +339,18 @@ header .subtitle {
   line-height: 1;
   color: var(--text-dim);
 }
+.key-shift {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-dim);
+  opacity: 0.5;
+  pointer-events: none;
+}
 
 /* === DETAIL PANEL === */
 .bottom-panels {
@@ -668,6 +680,7 @@ html[data-theme="light"] .key:active {
   .key-char { font-size: 11px; }
   .key-label { font-size: 0; visibility: hidden; }
   .key-dot { font-size: 10px; }
+  .key-shift { font-size: 7px; top: 2px; left: 3px; opacity: 0.4; }
   .bottom-panels { flex-direction: column; }
   .reference { grid-template-columns: 1fr; }
 }
@@ -1813,11 +1826,13 @@ function makeKeyEl(keyId, extraClass) {
   if (w !== undefined && w > 0) cls += ' key-wide';
   if (w === 0) cls += ' key-wide key-flex';
   if (FADED_KEYS[keyId]) cls += ' key-faded';
+  var shiftEl = el('span', { className: 'key-shift' });
   var charEl = el('span', { className: 'key-char' });
   var labelEl = el('span', { className: 'key-label' });
   var dotEl = el('span', { className: 'key-dot' });
-  var keyEl = el('div', { className: cls }, [charEl, labelEl, dotEl]);
+  var keyEl = el('div', { className: cls }, [shiftEl, charEl, labelEl, dotEl]);
   keyEl.setAttribute('data-key', keyId);
+  keyEl._shiftEl = shiftEl;
   keyEl._charEl = charEl;
   keyEl._labelEl = labelEl;
   keyEl._dotEl = dotEl;
@@ -2058,6 +2073,12 @@ function updateDisplay() {
     keyEl.setAttribute('data-cat', layer.cat);
 
     var otherLayer = shift ? data.normal : data.shifted;
+    if (otherLayer && otherLayer.char && otherLayer.char !== layer.char) {
+      keyEl._shiftEl.textContent = otherLayer.char;
+      keyEl._shiftEl.style.display = '';
+    } else {
+      keyEl._shiftEl.style.display = 'none';
+    }
     var matchesFilter = state.activeFilter === 'all' ||
       (layer.tags.indexOf(state.activeFilter) >= 0 &&
        (state.activeLevel === 99 || getKeyLevel(keyId, shift, state.activeFilter, state.activeLevel) === state.activeLevel));
